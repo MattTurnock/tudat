@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -28,7 +28,7 @@
 #include <string>
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -298,7 +298,7 @@ private:
 };
 
 //! Typedef for shared-pointer to TwoLineElementData object.
-typedef boost::shared_ptr< TwoLineElementData > TwoLineElementDataPointer;
+typedef std::shared_ptr< TwoLineElementData > TwoLineElementDataPointer;
 
 } // namespace input_output
 } // namespace tudat

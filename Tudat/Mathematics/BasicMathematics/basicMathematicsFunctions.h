@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -16,6 +16,8 @@
 
 #ifndef TUDAT_BASIC_MATHEMATICS_FUNCTIONS_H
 #define TUDAT_BASIC_MATHEMATICS_FUNCTIONS_H
+
+#include <Eigen/Core>
 
 #include <boost/random/mersenne_twister.hpp>
 
@@ -122,6 +124,7 @@ ScalarType raiseToIntegerPower( const ScalarType baseValue,
     // Return result of raising base to integer power.
     return resultOfRaisingBaseToIntegerPower;
 }
+
 
 } // namespace basic_mathematics
 

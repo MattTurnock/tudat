@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -15,6 +15,7 @@
 
 #include <Eigen/Core>
 
+#include "Tudat/Basics/timeType.h"
 #include <Tudat/Basics/utilityMacros.h>
 
 namespace tudat
@@ -49,6 +50,14 @@ int getSingleIntegrationSize( const IntegratedStateType stateType );
  */
 int getSingleIntegrationDifferentialEquationOrder( const IntegratedStateType stateType );
 
+//! Function to get the size of the generalized acceleration for a given state type
+/*!
+ * Function to get the size of the generalized acceleration (e.g. acceleration for translational dynamics, torque for rotational
+ * dynamics, mass rate for mass) for a given state type
+ * \param stateType State type for which generalized acceleration size is to be determined
+ * \return Generalized acceleration size
+ */
+int getGeneralizedAccelerationSize( const IntegratedStateType stateType );
 
 //! Base class for calculating the state derivative model for a single type of dynamics.
 /*!
@@ -227,11 +236,39 @@ protected:
 
     //! Vector used during post-processing of state.
     Eigen::Matrix< StateScalarType, Eigen::Dynamic, 1 > unprocessedState_;
-
 };
+
+extern template class SingleStateTypeDerivative< double, double >;
+
+#if( BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS )
+extern template class SingleStateTypeDerivative< long double, double >;
+extern template class SingleStateTypeDerivative< double, Time >;
+extern template class SingleStateTypeDerivative< long double, Time >;
+#endif
 
 } // namespace propagators
 
 } // namespace tudat
+
+
+namespace std
+{
+
+//! Hash for IntegratedStateType enum.
+template< >
+struct hash< tudat::propagators::IntegratedStateType >
+{
+    typedef tudat::propagators::IntegratedStateType argument_type;
+    typedef size_t result_type;
+
+    result_type operator () (const argument_type& x) const
+    {
+        using type = typename std::underlying_type<argument_type>::type;
+        return std::hash< type >( )( static_cast< type >( x ) );
+    }
+};
+
+} // namespace std
+
 
 #endif // TUDAT_STATEDERIVATIVE_H

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -27,8 +27,8 @@ namespace observation_partials
  * \param lightTimeCorrectionList List of light time corrections.
  * \return List of light-time correction partial objects
  */
-std::vector< boost::shared_ptr< LightTimeCorrectionPartial > > createLightTimeCorrectionPartials(
-        const std::vector< boost::shared_ptr< observation_models::LightTimeCorrection > >& lightTimeCorrectionList );
+std::vector< std::shared_ptr< LightTimeCorrectionPartial > > createLightTimeCorrectionPartials(
+        const std::vector< std::shared_ptr< observation_models::LightTimeCorrection > >& lightTimeCorrectionList );
 
 }
 

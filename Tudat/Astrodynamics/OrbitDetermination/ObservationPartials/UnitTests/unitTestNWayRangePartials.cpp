@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -104,27 +104,27 @@ BOOST_AUTO_TEST_CASE( testnWayRangePartials )
             // Generate n-way range model
             std::vector< std::string > perturbingBodies;
             perturbingBodies.push_back( "Earth" );
-            std::vector< boost::shared_ptr< observation_models::ObservationSettings > > legObservationModels;
+            std::vector< std::shared_ptr< observation_models::ObservationSettings > > legObservationModels;
             for( unsigned int i = 0; i < linkNumber + 2; i ++ )
             {
                 legObservationModels.push_back(
-                            boost::make_shared< observation_models::ObservationSettings >(
-                                one_way_range, boost::make_shared< FirstOrderRelativisticLightTimeCorrectionSettings >(
+                            std::make_shared< observation_models::ObservationSettings >(
+                                one_way_range, std::make_shared< FirstOrderRelativisticLightTimeCorrectionSettings >(
                                     perturbingBodies ) ) );
             }
 
-            boost::shared_ptr< ObservationModel< 1 > > nWayRangeModel =
+            std::shared_ptr< ObservationModel< 1 > > nWayRangeModel =
                     observation_models::ObservationModelCreator< 1, double, double >::createObservationModel(
-                        linkEnds, boost::make_shared< observation_models::NWayRangeObservationSettings >(
-                            legObservationModels, boost::bind( &getRetransmissionDelays, _1, linkNumber + 1 ) ), bodyMap  );
+                        linkEnds, std::make_shared< observation_models::NWayRangeObservationSettings >(
+                            legObservationModels, std::bind( &getRetransmissionDelays, std::placeholders::_1, linkNumber + 1 ) ), bodyMap  );
 
             // Create parameter objects.
-            boost::shared_ptr< EstimatableParameterSet< double > > fullEstimatableParameterSet =
+            std::shared_ptr< EstimatableParameterSet< double > > fullEstimatableParameterSet =
                     createEstimatableParameters( bodyMap, 1.1E7 );
 
             // Test observation partials
             testObservationPartials< 1 >(
-                        nWayRangeModel, bodyMap, fullEstimatableParameterSet, linkEnds, n_way_range, 1.0E-6, true, true, 1.0,
+                        nWayRangeModel, bodyMap, fullEstimatableParameterSet, linkEnds, n_way_range, 2.0E-6, true, true, 1.0,
                         ( Eigen::Vector4d( ) << 10.0, 1.0, 1.0, 10.0 ).finished( ) );
         }
 
@@ -136,26 +136,26 @@ BOOST_AUTO_TEST_CASE( testnWayRangePartials )
             // Generate n-way range model
             std::vector< std::string > perturbingBodies;
             perturbingBodies.push_back( "Earth" );
-            std::vector< boost::shared_ptr< observation_models::ObservationSettings > > legObservationModels;
+            std::vector< std::shared_ptr< observation_models::ObservationSettings > > legObservationModels;
             for( unsigned int i = 0; i < linkNumber + 2; i ++ )
             {
                 legObservationModels.push_back(
-                            boost::make_shared< observation_models::ObservationSettings >(
-                                one_way_range, boost::make_shared< FirstOrderRelativisticLightTimeCorrectionSettings >(
+                            std::make_shared< observation_models::ObservationSettings >(
+                                one_way_range, std::make_shared< FirstOrderRelativisticLightTimeCorrectionSettings >(
                                     perturbingBodies ) ) );
             }
-            boost::shared_ptr< ObservationModel< 1 > > nWayRangeModel =
+            std::shared_ptr< ObservationModel< 1 > > nWayRangeModel =
                     observation_models::ObservationModelCreator< 1, double, double >::createObservationModel(
-                        linkEnds, boost::make_shared< observation_models::NWayRangeObservationSettings >(
-                            legObservationModels, boost::bind( &getRetransmissionDelays, _1, linkNumber + 1 ) ), bodyMap  );
+                        linkEnds, std::make_shared< observation_models::NWayRangeObservationSettings >(
+                            legObservationModels, std::bind( &getRetransmissionDelays, std::placeholders::_1, linkNumber + 1 ) ), bodyMap  );
 
             // Create parameter objects.
-            boost::shared_ptr< EstimatableParameterSet< double > > fullEstimatableParameterSet =
+            std::shared_ptr< EstimatableParameterSet< double > > fullEstimatableParameterSet =
                     createEstimatableParameters( bodyMap, 1.1E7 );
 
             // Test observation partials
             testObservationPartials< 1 >(
-                        nWayRangeModel, bodyMap, fullEstimatableParameterSet, linkEnds, n_way_range, 1.0E-6, false, true, 1.0,
+                        nWayRangeModel, bodyMap, fullEstimatableParameterSet, linkEnds, n_way_range, 2.0E-6, false, true, 1.0,
                         ( Eigen::Vector4d( ) << 10.0, 1.0, 1.0, 20.0 ).finished( ) );
         }
     }

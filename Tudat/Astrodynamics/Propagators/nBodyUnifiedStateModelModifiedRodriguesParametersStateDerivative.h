@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -91,6 +91,8 @@ class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative: public N
 {
 public:
 
+    using SingleStateTypeDerivative< StateScalarType, TimeType >::postProcessState;
+
     //! Constructor
     /*!
      * Constructor
@@ -106,7 +108,7 @@ public:
      */
     NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative(
             const basic_astrodynamics::AccelerationMap& accelerationModelsPerBody,
-            const boost::shared_ptr< CentralBodyData< StateScalarType, TimeType > > centralBodyData,
+            const std::shared_ptr< CentralBodyData< StateScalarType, TimeType > > centralBodyData,
             const std::vector< std::string >& bodiesToIntegrate ):
         NBodyStateDerivative< StateScalarType, TimeType >(
             accelerationModelsPerBody, centralBodyData, unified_state_model_modified_rodrigues_parameters, bodiesToIntegrate )
@@ -283,10 +285,10 @@ public:
 private:
 
     //!  Gravitational parameters of central bodies used to convert Cartesian to Keplerian orbits, and vice versa
-    std::vector< boost::function< double( ) > > centralBodyGravitationalParameters_;
+    std::vector< std::function< double( ) > > centralBodyGravitationalParameters_;
 
     //! Central body accelerations for each propagated body, which has been removed from accelerationModelsPerBody_
-    std::vector< boost::shared_ptr< basic_astrodynamics::AccelerationModel< Eigen::Vector3d > > >
+    std::vector< std::shared_ptr< basic_astrodynamics::AccelerationModel< Eigen::Vector3d > > >
     centralAccelerations_;
 
     //! List of acceleration models, including the central body accelerations that are removed in this propagation scheme.
@@ -300,6 +302,15 @@ private:
     Eigen::Matrix< StateScalarType, Eigen::Dynamic, 1 > currentCartesianLocalSolution_;
 
 };
+
+extern template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< double, double >;
+
+#if( BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS )
+extern template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< long double, double >;
+extern template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< double, Time >;
+extern template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< long double, Time >;
+#endif
+
 
 } // namespace propagators
 

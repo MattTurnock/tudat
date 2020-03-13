@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -29,7 +29,9 @@ static std::map< VariableType, std::string > variableTypes =
     { independentVariable, "independent" },
     { cpuTimeVariable, "cpuTime" },
     { stateVariable, "state" },
-    { dependentVariable, "dependent" }
+    { dependentVariable, "dependent" },
+    { stateTransitionMatrix, "stateTransitionMatrix" },
+    { sensitivityMatrix, "sensitivityMatrix" }
 };
 
 //! `VariableType`s not supported by `json_interface`.
@@ -88,6 +90,7 @@ static std::map< PropagationDependentVariables, std::string > dependentVariableT
     { keplerian_state_dependent_variable, "keplerElements" },
     { modified_equinocial_state_dependent_variable, "modifiedEquinoctialElements" },
     { spherical_harmonic_acceleration_terms_dependent_variable, "sphericalHarmonicsAccelerationTerms" },
+    { spherical_harmonic_acceleration_norm_terms_dependent_variable, "sphericalHarmonicsAccelerationTermNorms" },
     { body_fixed_relative_cartesian_position, "bodyFixedRelativeCartesianPosition" },
     { body_fixed_relative_spherical_position, "bodyFixedRelativeSphericalPosition" },
     { total_gravity_field_variation_acceleration, "totalGravityFieldVariationAcceleration" },
@@ -99,7 +102,10 @@ static std::map< PropagationDependentVariables, std::string > dependentVariableT
 };
 
 //! `PropagationDependentVariables` not supported by `json_interface`.
-static std::vector< PropagationDependentVariables > unsupportedDependentVariableTypes = { };
+static std::vector< PropagationDependentVariables > unsupportedDependentVariableTypes =
+{
+
+};
 
 //! Convert `PropagationDependentVariables` to `json`.
 inline void to_json( nlohmann::json& jsonObject, const PropagationDependentVariables& dependentVariable )
@@ -117,21 +123,21 @@ inline void from_json( const nlohmann::json& jsonObject, PropagationDependentVar
 // VariableSettings
 
 //! Create a `json` object from a shared pointer to a `VariableSettings` object.
-void to_json( nlohmann::json& jsonObject, const boost::shared_ptr< VariableSettings >& variableSettings );
+void to_json( nlohmann::json& jsonObject, const std::shared_ptr< VariableSettings >& variableSettings );
 
 //! Create a shared pointer to a `VariableSettings` object from a `json` object.
-void from_json( const nlohmann::json& jsonObject, boost::shared_ptr< VariableSettings >& variableSettings );
+void from_json( const nlohmann::json& jsonObject, std::shared_ptr< VariableSettings >& variableSettings );
 
 
 // SingleDependentVariableSaveSettings
 
 //! Create a `json` object from a shared pointer to a `SingleDependentVariableSaveSettings` object.
 void to_json( nlohmann::json& jsonObject,
-              const boost::shared_ptr< SingleDependentVariableSaveSettings >& dependentVariableSettings );
+              const std::shared_ptr< SingleDependentVariableSaveSettings >& dependentVariableSettings );
 
 //! Create a shared pointer to a `SingleDependentVariableSaveSettings` object from a `json` object.
 void from_json( const nlohmann::json& jsonObject,
-                boost::shared_ptr< SingleDependentVariableSaveSettings >& dependentVariableSettings );
+                std::shared_ptr< SingleDependentVariableSaveSettings >& dependentVariableSettings );
 
 } // namespace propagators
 

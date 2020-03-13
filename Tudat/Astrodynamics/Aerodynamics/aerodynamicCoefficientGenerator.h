@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -20,8 +20,7 @@
 #include <vector>
 
 #include <boost/multi_array.hpp>
-#include <boost/make_shared.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -104,7 +103,7 @@ public:
         for( unsigned int i = 0; i < NumberOfIndependentVariables; i++ )
         {
             numberOfPointsPerIndependentVariables[ i ] = dataPointsOfIndependentVariables_[ i ].
-                                                         size( );
+                    size( );
         }
 
         aerodynamicCoefficients_.resize( numberOfPointsPerIndependentVariables );
@@ -176,7 +175,7 @@ public:
     //! Save aerodynamic coefficients to file.
     /*!
      *  Save aerodynamic coefficients to file.
-     *  \param fileName Map of paths to files where aerodynamics coefficients are to be saved.
+     *  \param fileNamesMap Map of paths to files where aerodynamics coefficients are to be saved.
      */
     void saveAerodynamicCoefficientsTables( const std::map< unsigned int, std::string >& fileNamesMap )
     {
@@ -227,8 +226,10 @@ public:
      *  numberOfIndependentVariables_
      *  \param independentVariables Independent variables of force and moment coefficient
      *  determination implemented by derived class
+     *  \param currentTime Time to which coefficients are to be updated (not used in this derived class).
      */
-    virtual void updateCurrentCoefficients( const std::vector< double >& independentVariables )
+    virtual void updateCurrentCoefficients( const std::vector< double >& independentVariables,
+                                            const double currentTime = TUDAT_NAN )
     {
         // Check if the correct number of aerodynamic coefficients is provided.
         if( independentVariables.size( ) != numberOfIndependentVariables_ )
@@ -243,8 +244,11 @@ public:
         // Update current coefficients.
         Eigen::Vector6d currentCoefficients = coefficientInterpolator_->interpolate(
                     independentVariables );
+
+
         currentForceCoefficients_ = currentCoefficients.segment( 0, 3 );
         currentMomentCoefficients_ = currentCoefficients.segment( 3, 3 );
+
     }
 
 protected:
@@ -262,7 +266,7 @@ protected:
     {
         // Create interpolator for coefficients.
         coefficientInterpolator_ =
-                boost::make_shared< interpolators::MultiLinearInterpolator< double,
+                std::make_shared< interpolators::MultiLinearInterpolator< double,
                 Eigen::Vector6d, 3 > >
                 ( dataPointsOfIndependentVariables_, aerodynamicCoefficients_ );
     }
@@ -288,8 +292,8 @@ protected:
 
     //! Interpolator producing continuous aerodynamic coefficients from the discrete calculations
     //! contained in aerodynamicCoefficients_.
-    boost::shared_ptr< interpolators::Interpolator< double, Eigen::Vector6d > >
-            coefficientInterpolator_;
+    std::shared_ptr< interpolators::Interpolator< double, Eigen::Vector6d > >
+    coefficientInterpolator_;
 };
 
 } // namespace aerodynamics

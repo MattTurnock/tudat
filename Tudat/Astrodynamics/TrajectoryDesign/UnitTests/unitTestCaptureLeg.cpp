@@ -1,31 +1,11 @@
-/*    Copyright (c) 2010-2012, Delft University of Technology
- *    All rights reserved.
+/*    Copyright (c) 2010-2019, Delft University of Technology
+ *    All rigths reserved
  *
- *    Redistribution and use in source and binary forms, with or without modification, are
- *    permitted provided that the following conditions are met:
- *      - Redistributions of source code must retain the above copyright notice, this list of
- *        conditions and the following disclaimer.
- *      - Redistributions in binary form must reproduce the above copyright notice, this list of
- *        conditions and the following disclaimer in the documentation and/or other materials
- *        provided with the distribution.
- *      - Neither the name of the Delft University of Technology nor the names of its contributors
- *        may be used to endorse or promote products derived from this software without specific
- *        prior written permission.
- *
- *    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS
- *    OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
- *    MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
- *    COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- *    EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
- *    GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
- *    AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- *    NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- *    OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120611    P. Musegaas       First creation of code.
- *      120628    P. Musegaas       Added unit test for new functionality of re-using the class.
+ *    This file is part of the Tudat. Redistribution and use in source and
+ *    binary forms, with or without modification, are permitted exclusively
+ *    under the terms of the Modified BSD license. You should have received
+ *    a copy of the license with this file. If not, please or visit:
+ *    http://tudat.tudelft.nl/LICENSE.
  *
  *    References
  *      Musegaas, P. (2012). Optimization of Space Trajectories Including Multiple Gravity Assists
@@ -77,8 +57,8 @@ BOOST_AUTO_TEST_CASE( testVelocitiesInfiniteParkingOrbit )
     const Eigen::Vector3d velocityBeforePlanet ( -5080.6362408257, 55179.1205883308,
                                                  3549.4183219232 );
 
-    boost::shared_ptr< Eigen::Vector3d > pointerToVelocityBeforePlanet
-            = boost::make_shared< Eigen::Vector3d > ( velocityBeforePlanet );
+    std::shared_ptr< Eigen::Vector3d > pointerToVelocityBeforePlanet
+            = std::make_shared< Eigen::Vector3d > ( velocityBeforePlanet );
 
     // Set the time of flight, which is irrelevant for the deltaV consumption.
     const double timeOfFlight = 1.0;
@@ -129,8 +109,8 @@ BOOST_AUTO_TEST_CASE( testVelocitiesCircularParkingOrbit )
     // Set velocity before capture body.
     const Eigen::Vector3d velocityBeforePlanet ( 0.0, 21480.6500358053, 0.0 );
 
-    boost::shared_ptr< Eigen::Vector3d > pointerToVelocityBeforePlanet
-            = boost::make_shared< Eigen::Vector3d > ( velocityBeforePlanet );
+    std::shared_ptr< Eigen::Vector3d > pointerToVelocityBeforePlanet
+            = std::make_shared< Eigen::Vector3d > ( velocityBeforePlanet );
 
     // Set the time of flight, which is irrelevant for the deltaV consumption.
     const double timeOfFlight = 1.0;
@@ -182,8 +162,8 @@ BOOST_AUTO_TEST_CASE( testUpdatingVariables )
     const Eigen::Vector3d velocityBeforePlanet ( -5080.6362408257, 55179.1205883308,
                                                  3549.4183219232 );
 
-    boost::shared_ptr< Eigen::Vector3d > pointerToVelocityBeforePlanet
-            = boost::make_shared< Eigen::Vector3d > ( velocityBeforePlanet );
+    std::shared_ptr< Eigen::Vector3d > pointerToVelocityBeforePlanet
+            = std::make_shared< Eigen::Vector3d > ( velocityBeforePlanet );
 
     // Set the dummy time of flight.
     const double dummyTimeOfFlight = TUDAT_NAN;

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -216,7 +216,7 @@ BOOST_AUTO_TEST_CASE( test_json_state_spherical )
     // Central body
 
     spice_interface::loadStandardSpiceKernels( );
-    boost::shared_ptr< Body > centralBody = createBodies( getDefaultBodySettings( { "Earth" } ) ).at( "Earth" );
+    std::shared_ptr< Body > centralBody = createBodies( getDefaultBodySettings( { "Earth" } ) ).at( "Earth" );
 
 
     // From radius

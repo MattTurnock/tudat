@@ -1,4 +1,4 @@
- #    Copyright (c) 2010-2018, Delft University of Technology
+ #    Copyright (c) 2010-2019, Delft University of Technology
  #    All rigths reserved
  #
  #    This file is part of the Tudat. Redistribution and use in source and
@@ -10,7 +10,11 @@
 
 # Add source files.
 set(INTERPOLATORS_SOURCES
+  "${SRCROOT}${MATHEMATICSDIR}/Interpolators/cubicSplineInterpolator.cpp"
   "${SRCROOT}${MATHEMATICSDIR}/Interpolators/linearInterpolator.cpp"
+  "${SRCROOT}${MATHEMATICSDIR}/Interpolators/lagrangeInterpolator.cpp"
+  "${SRCROOT}${MATHEMATICSDIR}/Interpolators/interpolator.cpp"
+  "${SRCROOT}${MATHEMATICSDIR}/Interpolators/multiLinearInterpolator.cpp"
 )
 
 # Add header files.

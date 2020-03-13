@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -143,7 +143,7 @@ void KernelDensityDistribution::generateKernelPointerMatrix( )
     }
 
     // Fill kernel pointer matrix with distribution pointer objects
-    std::vector< boost::shared_ptr< ContinuousProbabilityDistribution< double > > > vector( dataSamples_[ 0 ].rows( ) );
+    std::vector< std::shared_ptr< ContinuousProbabilityDistribution< double > > > vector( dataSamples_[ 0 ].rows( ) );
 
     // Iterate over all samples; create kernel for each entry in each sample
     for( unsigned int i = 0; i < dataSamples_.size( ); i++ )

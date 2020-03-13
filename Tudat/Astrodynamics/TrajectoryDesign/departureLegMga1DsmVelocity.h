@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -25,6 +25,7 @@
 
 namespace tudat
 {
+
 namespace transfer_trajectories
 {
 
@@ -58,6 +59,7 @@ public:
      *  \param excessVelocityMagnitude the magnitude of the hyperbolic excess velocity of the DSM.
      *  \param excessVelocityInPlaneAngle the in plane angle of the hyperbolic excess velocity.
      *  \param excessVelocityOutOfPlaneAngle the out of plane angle of the hyperbolic excess velocity.
+     *  \param includeDepartureDeltaV Boolean denoting whether to include the Delta V of departure.
      */
     DepartureLegMga1DsmVelocity( const Eigen::Vector3d& departureBodyPosition,
                                  const Eigen::Vector3d& arrivalBodyPosition,
@@ -70,7 +72,8 @@ public:
                                  const double dsmTimeOfFlightFraction,
                                  const double excessVelocityMagnitude,
                                  const double excessVelocityInPlaneAngle,
-                                 const double excessVelocityOutOfPlaneAngle ):
+                                 const double excessVelocityOutOfPlaneAngle,
+                                 const bool includeDepartureDeltaV = true ):
         DepartureLeg( departureBodyPosition,
                       arrivalBodyPosition,
                       timeOfFlight,
@@ -78,7 +81,7 @@ public:
                       centralBodyGravitationalParameter,
                       departureBodyGravitationalParameter,
                       semiMajorAxis,
-                      eccentricity),
+                      eccentricity, includeDepartureDeltaV ),
         dsmTimeOfFlightFraction_( dsmTimeOfFlightFraction ),
         excessVelocityMagnitude_( excessVelocityMagnitude ),
         excessVelocityInPlaneAngle_( excessVelocityInPlaneAngle ),
@@ -136,6 +139,7 @@ public:
 protected:
 
 private:
+
     //! The fraction of the time of flight of the DSM.
     /*!
      * The fraction of the time of flight of the corresponding leg at which the DSM is performed.
@@ -191,15 +195,10 @@ private:
      */
     double deltaVDsm_;
 
-    //! The deltaV of the departure maneuver.
-    /*!
-     * The deltaV of the departure maneuver.
-     */
-    double deltaVDeparture_;
-
 };
 
 } // namespace transfer_trajectories
+
 } // namespace tudat
 
 #endif // TUDAT_DEPARTURE_LEG_MGA_1DSM_VELOCITY_H

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -16,8 +16,8 @@
 #include <stdexcept>
 #include <string>
 
-#include <boost/function.hpp>
-#include <boost/shared_ptr.hpp>
+#include <functional>
+#include <memory>
 
 namespace tudat
 {
@@ -417,7 +417,7 @@ bool checkRootFunctionValueCondition( const ScalarType currentRootGuess,
 }
 
 //! Typedef for shared-pointer to MaximumIterationsTerminationCondition object.
-typedef boost::shared_ptr< MaximumIterationsTerminationCondition >
+typedef std::shared_ptr< MaximumIterationsTerminationCondition >
 MaximumIterationsTerminationConditionPointer;
 
 } // namespace termination_conditions

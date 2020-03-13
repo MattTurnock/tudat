@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -12,9 +12,9 @@
 #ifndef TUDAT_AERODYNAMIC_TORQUE_H
 #define TUDAT_AERODYNAMIC_TORQUE_H
 
-#include <boost/function.hpp>
+#include <functional>
 #include <boost/lambda/lambda.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -84,10 +84,10 @@ class AerodynamicTorque : public basic_astrodynamics::TorqueModel
 private:
 
     //! Typedef for double-returning function.
-    typedef boost::function< double ( ) > DoubleReturningFunction;
+    typedef std::function< double ( ) > DoubleReturningFunction;
 
     //! Typedef for coefficient-returning function.
-    typedef boost::function< Eigen::Vector3d( ) > CoefficientReturningFunction;
+    typedef std::function< Eigen::Vector3d( ) > CoefficientReturningFunction;
 
 public:
 

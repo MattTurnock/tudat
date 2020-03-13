@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -12,7 +12,7 @@
 #ifndef TUDAT_CONICAL_FRUSTUM_H
 #define TUDAT_CONICAL_FRUSTUM_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -169,7 +169,7 @@ private:
 };
 
 //! Typedef for shared-pointer to ConicalFrustum object.
-typedef boost::shared_ptr< ConicalFrustum > ConicalFrustumPointer;
+typedef std::shared_ptr< ConicalFrustum > ConicalFrustumPointer;
 
 } // namespace geometric_shapes
 } // namespace tudat

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -24,8 +24,8 @@ splitOneWayRangeRateLightTimeCorrectionsBetweenArcs(
     PerLinkEndPerLightTimeSolutionCorrections arcStartCorrections;
     PerLinkEndPerLightTimeSolutionCorrections arcEndCorrections;
 
-    std::vector< std::vector< boost::shared_ptr< observation_models::LightTimeCorrection > > > currentArcStartCorrections;
-    std::vector< std::vector< boost::shared_ptr< observation_models::LightTimeCorrection > > > currentArcEndCorrections;
+    std::vector< std::vector< std::shared_ptr< observation_models::LightTimeCorrection > > > currentArcStartCorrections;
+    std::vector< std::vector< std::shared_ptr< observation_models::LightTimeCorrection > > > currentArcEndCorrections;
 
     // Iterate over all link ends
     for( PerLinkEndPerLightTimeSolutionCorrections::const_iterator correctionIterator = combinedCorrections.begin( );

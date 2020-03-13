@@ -1,4 +1,4 @@
- #    Copyright (c) 2010-2018, Delft University of Technology
+ #    Copyright (c) 2010-2019, Delft University of Technology
  #    All rigths reserved
  #
  #    This file is part of the Tudat. Redistribution and use in source and
@@ -32,4 +32,4 @@ setup_tudat_library_target(tudat_propulsion "${SRCROOT}${PROPULSIONDIR}")
 
 add_executable(test_ThrustAcceleration "${SRCROOT}${PROPULSIONDIR}/UnitTests/unitTestThrustAcceleration.cpp")
 setup_custom_test_program(test_ThrustAcceleration "${SRCROOT}${PROPULSIONDIR}")
-target_link_libraries(test_ThrustAcceleration ${TUDAT_PROPAGATION_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(test_ThrustAcceleration ${TUDAT_ESTIMATION_LIBRARIES} ${Boost_LIBRARIES})

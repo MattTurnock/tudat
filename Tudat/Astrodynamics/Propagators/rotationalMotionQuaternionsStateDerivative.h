@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -56,7 +56,7 @@ Eigen::Vector4d calculateQuaternionDerivative( const Eigen::Vector4d& currentQua
 
 //! Class for computing the state derivative for rotational dynamics of N bodies.
 /*!
- *  Class for computing the state derivative for rotational dynamics of N bodies., using quaternion from body-fixed to inertial
+ *  Class for computing the state derivative for rotational dynamics of N bodies, using quaternion from body-fixed to inertial
  *  frame (in quaternion format) and angular velocity-vector of body expressed in body-fixed frame as the rotational state of a
  *  single body
  */
@@ -64,6 +64,8 @@ template< typename StateScalarType = double, typename TimeType = double >
 class RotationalMotionQuaternionsStateDerivative: public RotationalMotionStateDerivative< StateScalarType, TimeType >
 {
 public:
+
+    using SingleStateTypeDerivative< StateScalarType, TimeType >::postProcessState;
 
     //! Constructor.
     /*!
@@ -78,9 +80,9 @@ public:
     RotationalMotionQuaternionsStateDerivative(
             const basic_astrodynamics::TorqueModelMap& torqueModelsPerBody,
             const std::vector< std::string >& bodiesToPropagate,
-            std::vector< boost::function< Eigen::Matrix3d( ) > > bodyInertiaTensorFunctions,
-            std::vector< boost::function< Eigen::Matrix3d( ) > > bodyInertiaTensorTimeDerivativeFunctions =
-            std::vector< boost::function< Eigen::Matrix3d( ) > >( ) ):
+            std::vector< std::function< Eigen::Matrix3d( ) > > bodyInertiaTensorFunctions,
+            std::vector< std::function< Eigen::Matrix3d( ) > > bodyInertiaTensorTimeDerivativeFunctions =
+            std::vector< std::function< Eigen::Matrix3d( ) > >( ) ):
         RotationalMotionStateDerivative< StateScalarType, TimeType >(
             torqueModelsPerBody, quaternions, bodiesToPropagate, bodyInertiaTensorFunctions,
             bodyInertiaTensorTimeDerivativeFunctions )
@@ -195,6 +197,15 @@ public:
 private:
 
 };
+
+
+extern template class RotationalMotionQuaternionsStateDerivative< double, double >;
+
+#if( BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS )
+extern template class RotationalMotionQuaternionsStateDerivative< long double, double >;
+extern template class RotationalMotionQuaternionsStateDerivative< double, Time >;
+extern template class RotationalMotionQuaternionsStateDerivative< long double, Time >;
+#endif
 
 } // namespace propagators
 

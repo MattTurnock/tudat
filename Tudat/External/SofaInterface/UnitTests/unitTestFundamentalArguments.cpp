@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE( testSofaFundamentalArguments )
 
     // Calculate Delaunay arguments with GMST.
     Eigen::Matrix< double, 6, 1 > fundamentalArgumentValuesWithGmst =
-            calculateDelaunayFundamentalArgumentsWithGmst( testSecondsSinceJ2000 );
+            calculateApproximateDelaunayFundamentalArgumentsWithGmst( testSecondsSinceJ2000 );
     for( unsigned int i = 0; i < 5; i++ )
     {
         BOOST_CHECK_SMALL( std::fabs( fundamentalArgumentValuesWithGmst( i + 1 ) - fundamentalArgumentValues( i ) ), 1.0E-15  );

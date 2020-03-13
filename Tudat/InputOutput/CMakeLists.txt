@@ -1,4 +1,4 @@
- #    Copyright (c) 2010-2018, Delft University of Technology
+ #    Copyright (c) 2010-2019, Delft University of Technology
  #    All rigths reserved
  #
  #    This file is part of the Tudat. Redistribution and use in source and
@@ -62,9 +62,8 @@ set(INPUTOUTPUT_HEADERS
   "${SRCROOT}${INPUTOUTPUTDIR}/multiDimensionalArrayReader.h"
   "${SRCROOT}${INPUTOUTPUTDIR}/multiDimensionalArrayWriter.h"
   "${SRCROOT}${INPUTOUTPUTDIR}/aerodynamicCoefficientReader.h"
+  "${SRCROOT}${INPUTOUTPUTDIR}/readHistoryFromFile.h"
   "${SRCROOT}${INPUTOUTPUTDIR}/tabulatedAtmosphereReader.h"
-  "${SRCROOT}${INPUTOUTPUTDIR}/spartaDataReader.h"
-  "${SRCROOT}${INPUTOUTPUTDIR}/spartaInputOutput.h"
 )
 
 # Add unit test files.

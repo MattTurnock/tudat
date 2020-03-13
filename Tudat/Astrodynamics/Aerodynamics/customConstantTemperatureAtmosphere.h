@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -112,8 +112,8 @@ class CustomConstantTemperatureAtmosphere : public StandardAtmosphere
 public:
 
     //! Typedef for density function.
-    typedef boost::function< double( const double, const double,
-                                     const double, const double ) > DensityFunction;
+    typedef std::function< double( const double, const double,
+                                   const double, const double ) > DensityFunction;
 
     //! Default constructor.
     /*!
@@ -300,7 +300,7 @@ private:
 };
 
 //! Typedef for shared-pointer to CustomConstantTemperatureAtmosphere object.
-typedef boost::shared_ptr< CustomConstantTemperatureAtmosphere > CustomConstantTemperatureAtmospherePointer;
+typedef std::shared_ptr< CustomConstantTemperatureAtmosphere > CustomConstantTemperatureAtmospherePointer;
 
 } // namespace aerodynamics
 

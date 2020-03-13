@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -66,8 +66,8 @@ Eigen::Matrix< ScalarType, 6, 1 > propagateKeplerOrbit(
         const Eigen::Matrix< ScalarType, 6, 1 >& initialStateInKeplerianElements,
         const ScalarType propagationTime,
         const ScalarType centralBodyGravitationalParameter,
-        boost::shared_ptr< root_finders::RootFinderCore< ScalarType > > aRootFinder =
-        boost::shared_ptr< root_finders::RootFinderCore< ScalarType > >( ) )
+        std::shared_ptr< root_finders::RootFinderCore< ScalarType > > aRootFinder =
+        std::shared_ptr< root_finders::RootFinderCore< ScalarType > >( ) )
 {
     // Create final state in Keplerian elements.
     Eigen::Matrix< ScalarType, 6, 1 > finalStateInKeplerianElements =

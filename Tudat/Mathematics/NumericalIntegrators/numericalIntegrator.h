@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -15,11 +15,12 @@
 #include <iostream>
 #include <limits>
 
-#include <boost/function.hpp>
-#include <boost/lambda/lambda.hpp>
+#include <functional>
+#include <memory>
 
 #include <Eigen/Core>
 
+#include "Tudat/Basics/basicTypedefs.h"
 #include "Tudat/Basics/timeType.h"
 #include "Tudat/Basics/utilityMacros.h"
 #include "Tudat/Mathematics/BasicMathematics/mathematicalConstants.h"
@@ -40,7 +41,7 @@ namespace numerical_integrators
  * \tparam IndependentVariableType The type of the independent variable.
  */
 template< typename IndependentVariableType = double, typename StateType = Eigen::VectorXd,
-           typename StateDerivativeType = StateType, typename TimeStepType = IndependentVariableType >
+          typename StateDerivativeType = StateType, typename TimeStepType = IndependentVariableType >
 class NumericalIntegrator
 {
 public:
@@ -50,7 +51,7 @@ public:
      * Typedef to the state derivative function. This should be a pointer to a function or a boost
      * function.
      */
-    typedef boost::function< StateDerivativeType(
+    typedef std::function< StateDerivativeType(
             const IndependentVariableType, const StateType& ) > StateDerivativeFunction;
 
     //! Default constructor.
@@ -59,7 +60,9 @@ public:
      * \param stateDerivativeFunction State derivative function.
      */
     NumericalIntegrator( const StateDerivativeFunction& stateDerivativeFunction ) :
-        stateDerivativeFunction_( stateDerivativeFunction ) { }
+        stateDerivativeFunction_( stateDerivativeFunction ),
+        propagationTerminationFunction_( [ = ]( const double, const double ){ return false; } )
+    { }
 
     //! Default virtual destructor.
     /*!
@@ -182,7 +185,7 @@ public:
      *  \param terminationFunction Function that returns true if termination condition is reached, false if it has not,
      *  as a function of current time.
      */
-    void setPropagationTerminationFunction( boost::function< bool( const double, const double ) > terminationFunction )
+    void setPropagationTerminationFunction( std::function< bool( const double, const double ) > terminationFunction )
     {
         propagationTerminationFunction_ = terminationFunction;
     }
@@ -208,8 +211,9 @@ public:
     {
         TUDAT_UNUSED_PARAMETER( newState );
         TUDAT_UNUSED_PARAMETER( allowRollback );
-        throw std::runtime_error( "Error in numerical integrator. The function to modify the current state has not been implemented "
-                                  "in this integrator." );
+
+        throw std::runtime_error(
+                    "Error in numerical integrator. The function to modify the current state has not been implemented" );
     }
 
     //! Modify the state and time for the current step.
@@ -252,9 +256,13 @@ protected:
      *  By default, this function evaluates always to false, so the propagation termination conditions will not be
      *  checked during the integration subteps.
      */
-    boost::function< bool( const double, const double ) > propagationTerminationFunction_ = boost::lambda::constant( false );
-
+    std::function< bool( const double, const double ) > propagationTerminationFunction_;
 };
+
+
+extern template class NumericalIntegrator < double, Eigen::VectorXd, Eigen::VectorXd >;
+extern template class NumericalIntegrator < double, Eigen::Vector6d, Eigen::Vector6d >;
+extern template class NumericalIntegrator < double, Eigen::MatrixXd, Eigen::MatrixXd >;
 
 //! Perform an integration to a specified independent variable value.
 template< typename IndependentVariableType, typename StateType, typename StateDerivativeType, typename TimeStepType >
@@ -312,8 +320,8 @@ StateType NumericalIntegrator< IndependentVariableType, StateType, StateDerivati
                 else
                 {
                     std::cerr << "Warning, integrateTo function has failed to converge to final time to within tolerances, difference between true and requested final time is " <<
-                        intervalEnd - getCurrentIndependentVariable( ) << ", final time is: " <<
-                               getCurrentIndependentVariable( ) << std::endl;
+                                 intervalEnd - getCurrentIndependentVariable( ) << ", final time is: " <<
+                                 getCurrentIndependentVariable( ) << std::endl;
                 }
             }
         }
@@ -327,14 +335,14 @@ StateType NumericalIntegrator< IndependentVariableType, StateType, StateDerivati
  * Typedef for shared-pointer to a default numerical integrator (IndependentVariableType = double,
  * StateType = Eigen::VectorXd, StateDerivativeType = Eigen::VectorXd).
  */
-typedef boost::shared_ptr< NumericalIntegrator< > > NumericalIntegratorXdPointer;
+typedef std::shared_ptr< NumericalIntegrator< > > NumericalIntegratorXdPointer;
 
 //! Typedef for a shared-pointer to a scalar numerical integrator.
 /*!
  * Typedef for shared-pointer to a scalar numerical integrator (IndependentVariableType = double,
  * StateType = double, StateDerivativeType = double).
  */
-typedef boost::shared_ptr< NumericalIntegrator< double, double, double > > NumericalIntegratordPointer;
+typedef std::shared_ptr< NumericalIntegrator< double, double, double > > NumericalIntegratordPointer;
 
 } // namespace numerical_integrators
 

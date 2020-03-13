@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -296,7 +296,7 @@ void testMeanToEccentricAnomalyConversions(
     ScalarType testMeanAnomaly, reverseCalculatedMeanAnomaly, eccentricAnomaly = 0.0;
 
     // Instantiate random number generator.
-    boost::mt19937 randomNumbergenerator( time( 0 ) );
+    boost::mt19937 randomNumbergenerator( 0 );
 
     // Create generator for eccentricity (only used if useConstantEccentricity is false).
     boost::random::uniform_real_distribution< > eccentricityDistribution;

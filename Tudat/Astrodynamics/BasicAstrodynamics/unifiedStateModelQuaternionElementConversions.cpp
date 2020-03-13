@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -651,7 +651,7 @@ Eigen::Vector6d convertUnifiedStateModelQuaternionsToCartesianElements(
     // Declare auxiliary parameters before using them in the if statement
     double cosineLambda;
     double sineLambda;
-    double rightAscensionOfLatitude;
+//    double rightAscensionOfLatitude;
 
     // Compute auxiliary parameters cosineLambda, sineLambda and lambda
     if ( ( std::fabs( epsilon3QuaternionParameter ) < singularityTolerance ) &&
@@ -674,7 +674,7 @@ Eigen::Vector6d convertUnifiedStateModelQuaternionsToCartesianElements(
                          epsilon3QuaternionParameter * epsilon3QuaternionParameter ) / denominator;
         sineLambda = ( 2.0 * epsilon3QuaternionParameter *
                        etaQuaternionParameter ) / denominator;
-        rightAscensionOfLatitude = std::atan2( sineLambda, cosineLambda );
+//        rightAscensionOfLatitude = std::atan2( sineLambda, cosineLambda );
     }
 
     // Compute auxiliary parameters auxiliaryParameter1, auxiliaryParameter2 and auxiliaryVector1

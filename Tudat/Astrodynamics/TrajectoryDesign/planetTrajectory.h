@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -20,7 +20,7 @@
 
 #include <Eigen/Core>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "Tudat/Astrodynamics/Ephemerides/approximatePlanetPositions.h"
 
@@ -33,8 +33,6 @@ namespace transfer_trajectories
 /*!
  * Return a vector of positions and times from ephemeris data for a certain epoch and duration.
  * \param ephemerisPtr pointer to the ephemeris of the planet.
- * \param centralBodyGravitationalParameter central body gravitational parameter.
- * \param startingEpochMJD2000 starting epoch in MJD2000.
  * \param duration duration for which the planet trajectory is given.
  * \param maximumTimeStep maximum time between points along the trajectory.
  * \param positionVector vector of positions along the trajectory.

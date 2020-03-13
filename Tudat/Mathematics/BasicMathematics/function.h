@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -12,7 +12,7 @@
 #ifndef TUDAT_FUNCTION_H
 #define TUDAT_FUNCTION_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace tudat
 {
@@ -77,7 +77,7 @@ public:
  * Typedef for shared-pointer to Function object with IndependentVariable=double,
  * DependentVariable=double.
  */
-typedef boost::shared_ptr< Function< > > FunctionPointer;
+typedef std::shared_ptr< Function< > > FunctionPointer;
 
 } // namespace basic_mathematics
 } // namespace tudat

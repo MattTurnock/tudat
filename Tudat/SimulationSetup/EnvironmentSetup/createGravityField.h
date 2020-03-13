@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -16,7 +16,7 @@
 #include <string>
 #include <boost/algorithm/string.hpp>
 #include <boost/algorithm/string/trim.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "Tudat/SimulationSetup/EnvironmentSetup/body.h"
 #include "Tudat/SimulationSetup/EnvironmentSetup/createGravityFieldVariations.h"
@@ -140,6 +140,14 @@ public:
      */
     double getGravitationalParameter( ){ return gravitationalParameter_; }
 
+    //! Function to reset gravitational parameter for gravity field.
+    /*!
+     *  Function to reset gravitational parameter for gravity field.
+     *  \param gravitationalParameter New gravitational parameter for gravity field.
+     */
+    void resetGravitationalParameter( const double gravitationalParameter )
+    { gravitationalParameter_ = gravitationalParameter; }
+
     //! Function to return reference radius of spherical harmonic field expansion
     /*!
      *  Function to return reference radius of spherical harmonic field expansion
@@ -160,6 +168,10 @@ public:
      *  \return Sine spherical harmonic coefficients (geodesy normalized).
      */
     Eigen::MatrixXd getSineCoefficients( ){ return sineCoefficients_; }
+
+    void resetCosineCoefficients( const Eigen::MatrixXd& cosineCoefficients ){ cosineCoefficients_ = cosineCoefficients; }
+
+    void resetSineCoefficients( const Eigen::MatrixXd& sineCoefficients ){ sineCoefficients_ = sineCoefficients; }
 
     //! Function to return identifier for body-fixed reference frame.
     /*!
@@ -383,7 +395,7 @@ protected:
  * the coefficients are referred.
  * \return Gravity field settings for a homogeneous triaxial ellipsoid of given properties.
  */
-boost::shared_ptr< SphericalHarmonicsGravityFieldSettings > createHomogeneousTriAxialEllipsoidGravitySettings(
+std::shared_ptr< SphericalHarmonicsGravityFieldSettings > createHomogeneousTriAxialEllipsoidGravitySettings(
         const double axisA, const double axisB, const double axisC, const double ellipsoidDensity,
         const int maximumDegree, const int maximumOrder,
         const std::string& associatedReferenceFrame  );
@@ -425,12 +437,12 @@ std::pair< double, double > readGravityFieldFile(
  *  that are to be used (but not immediately set!) by current body under consideration.
  *  \return Gravity field model created according to settings in gravityFieldSettings.
  */
-boost::shared_ptr< gravitation::GravityFieldModel > createGravityFieldModel(
-        const boost::shared_ptr< GravityFieldSettings > gravityFieldSettings,
+std::shared_ptr< gravitation::GravityFieldModel > createGravityFieldModel(
+        const std::shared_ptr< GravityFieldSettings > gravityFieldSettings,
         const std::string& body,
         const NamedBodyMap& bodyMap = NamedBodyMap( ),
-        const std::vector< boost::shared_ptr< GravityFieldVariationSettings > >& gravityFieldVariationSettings =
-        std::vector< boost::shared_ptr< GravityFieldVariationSettings > >( ) );
+        const std::vector< std::shared_ptr< GravityFieldVariationSettings > >& gravityFieldVariationSettings =
+        std::vector< std::shared_ptr< GravityFieldVariationSettings > >( ) );
 
 } // namespace simulation_setup
 

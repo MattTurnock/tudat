@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -77,7 +77,7 @@ public:
      *  \param lagrangeBoundaryHandling Boundary handling does something.
      *  \param boundaryHandling Boundary handling method, in case the independent variable is outside the
      *      specified range.
-     *  \param defaultExtrapolationValue Pairs of default values to be used for extrapolation, in case
+     *  \param defaultExtrapolationValue Pair of default values to be used for extrapolation, in case
      *      of use_default_value or use_default_value_with_warning as methods for boundaryHandling.
      */
     LagrangeInterpolator(
@@ -88,8 +88,8 @@ public:
             const LagrangeInterpolatorBoundaryHandling lagrangeBoundaryHandling = lagrange_cubic_spline_boundary_interpolation,
             const BoundaryInterpolationType boundaryHandling = extrapolate_at_boundary,
             const std::pair< DependentVariableType, DependentVariableType >& defaultExtrapolationValue =
-            std::make_pair( IdentityElement< DependentVariableType >::getAdditionIdentity( ),
-                            IdentityElement< DependentVariableType >::getAdditionIdentity( ) ) ):
+            std::make_pair( IdentityElement::getAdditionIdentity< DependentVariableType >( ),
+                            IdentityElement::getAdditionIdentity< DependentVariableType >( ) ) ):
         OneDimensionalInterpolator< IndependentVariableType, DependentVariableType >( boundaryHandling,
                                                                                       defaultExtrapolationValue ),
         numberOfStages_( numberOfStages ), lagrangeBoundaryHandling_( lagrangeBoundaryHandling )
@@ -100,8 +100,8 @@ public:
         }
 
         // Set data vectors.
-        independentValues_ = independentVariables;
-        dependentValues_ = dependentVariables;
+        independentValues_ = std::move( independentVariables );
+        dependentValues_ = std::move( dependentVariables );
         numberOfIndependentValues_ = static_cast< int >( independentValues_.size( ) );
 
         // Check if data is in ascending order
@@ -157,7 +157,7 @@ public:
      *  \param lagrangeBoundaryHandling Boundary handling method specific to the Lagrange interpolator.
      *  \param boundaryHandling Boundary handling method, in case the independent variable is outside the
      *      specified range.
-     *  \param defaultExtrapolationValue Pairs of default values to be used for extrapolation, in case
+     *  \param defaultExtrapolationValue Pair of default values to be used for extrapolation, in case
      *      of use_default_value or use_default_value_with_warning as methods for boundaryHandling.
      */
     LagrangeInterpolator(
@@ -167,8 +167,8 @@ public:
             const LagrangeInterpolatorBoundaryHandling lagrangeBoundaryHandling = lagrange_cubic_spline_boundary_interpolation,
             const BoundaryInterpolationType boundaryHandling = extrapolate_at_boundary,
             const std::pair< DependentVariableType, DependentVariableType >& defaultExtrapolationValue =
-            std::make_pair( IdentityElement< DependentVariableType >::getAdditionIdentity( ),
-                            IdentityElement< DependentVariableType >::getAdditionIdentity( ) ) ):
+            std::make_pair( IdentityElement::getAdditionIdentity< DependentVariableType >( ),
+                            IdentityElement::getAdditionIdentity< DependentVariableType >( ) ) ):
         OneDimensionalInterpolator< IndependentVariableType, DependentVariableType >( boundaryHandling,
                                                                                       defaultExtrapolationValue ),
         numberOfStages_( numberOfStages ), lagrangeBoundaryHandling_( lagrangeBoundaryHandling )
@@ -191,8 +191,8 @@ public:
         for( typename std::map< IndependentVariableType, DependentVariableType >::const_iterator
              mapIterator = dataMap.begin( ); mapIterator != dataMap.end( ); mapIterator++ )
         {
-            independentValues_.push_back( mapIterator->first );
-            dependentValues_.push_back( mapIterator->second );
+            independentValues_.push_back( std::move( mapIterator->first ) );
+            dependentValues_.push_back( std::move( mapIterator->second ) );
         }
 
         // Define zero entry for dependent variable.
@@ -234,8 +234,6 @@ public:
      */
     DependentVariableType interpolate( const IndependentVariableType targetIndependentVariableValue )
     {
-        using std::pow;
-
         // Check whether boundary handling needs to be applied, if independent variable is beyond its defined range.
         DependentVariableType interpolatedValue = zeroEntry_;
         bool useValue = false;
@@ -314,7 +312,7 @@ public:
                 }
 
                 // Evaluate interpolating polynomial at requested data point.
-                for( int i = 0; i <=  2 *offsetEntries_ + 1; i++ )
+                for( int i = 0; i < numberOfStages_; i++ )
                 {
                     j = i + lowerEntry - offsetEntries_;
                     interpolatedValue += dependentValues_[ j ]  *
@@ -368,7 +366,7 @@ private:
         // Iterate over all intervals and calculate denominators
         int currentIterationStart;
         denominators.resize( numberOfIndependentValues_ );
-        for( int i = offsetEntries_; i <= numberOfIndependentValues_ - offsetEntries_; i++ )
+        for( int i = offsetEntries_; i < numberOfIndependentValues_ - offsetEntries_ - 1 ; i++ )
         {
             // Determine start index in independent variables for current polynomial
             currentIterationStart = i - offsetEntries_;
@@ -376,12 +374,12 @@ private:
             denominators[ i ].resize( 2 * offsetEntries_ + 2 );
 
             // Calculate all denominators for single interval.
-            for( int j = 0; j <= 2 * offsetEntries_ + 1; j++ )
+            for( int j = 0; j < numberOfStages_; j++ )
             {
                 denominators[ i ][ j ] =
                         mathematical_constants::getFloatingInteger< ScalarType >( 1 );
 
-                for( int k = 0; k <= 2 * offsetEntries_ + 1; k++ )
+                for( int k = 0; k < numberOfStages_; k++ )
                 {
                     if( k != j )
                     {
@@ -422,19 +420,19 @@ private:
             std::map< IndependentVariableType, DependentVariableType > startMap;
             for( int i = 0; i <= cubicSplineInputSize; i++ )
             {
-                startMap[ independentValues_[ i ] ] = dependentValues_[ i ];
+                startMap[ independentValues_.at( i ) ] = dependentValues_.at( i );
             }
             std::map< IndependentVariableType, DependentVariableType > endMap;
             for( int i = numberOfIndependentValues_ - cubicSplineInputSize - 1;
                  i < numberOfIndependentValues_; i++ )
             {
-                endMap[ independentValues_[ i ] ] = dependentValues_[ i ];
+                endMap[ independentValues_.at( i ) ] = dependentValues_.at( i );
             }
 
             // Create cubic spline interpolators
-            beginInterpolator_ = boost::make_shared< CubicSplineInterpolator
+            beginInterpolator_ = std::make_shared< CubicSplineInterpolator
                     < IndependentVariableType, DependentVariableType, ScalarType > >( startMap );
-            endInterpolator_ = boost::make_shared< CubicSplineInterpolator
+            endInterpolator_ = std::make_shared< CubicSplineInterpolator
                     < IndependentVariableType, DependentVariableType, ScalarType > >( endMap );
         }
     }
@@ -466,11 +464,11 @@ private:
     std::vector< ScalarType > independentVariableDifferenceCache;
 
     //! Interpolator to be used at beginning of domain.
-    boost::shared_ptr< OneDimensionalInterpolator
+    std::shared_ptr< OneDimensionalInterpolator
     < IndependentVariableType, DependentVariableType > > beginInterpolator_;
 
     //! Interpolator to be used at end of domain.
-    boost::shared_ptr< OneDimensionalInterpolator
+    std::shared_ptr< OneDimensionalInterpolator
     < IndependentVariableType, DependentVariableType > > endInterpolator_;
 
     //! Size of (in)dependent variable vector
@@ -484,6 +482,24 @@ private:
     LagrangeInterpolatorBoundaryHandling lagrangeBoundaryHandling_;
 
 };
+
+extern template class LagrangeInterpolator< double, Eigen::VectorXd >;
+extern template class LagrangeInterpolator< double, Eigen::Vector6d >;
+extern template class LagrangeInterpolator< double, Eigen::MatrixXd >;
+
+#if( BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS )
+extern template class LagrangeInterpolator< Time, Eigen::VectorXd, long double >;
+extern template class LagrangeInterpolator< Time, Eigen::Vector6d, long double >;
+extern template class LagrangeInterpolator< Time, Eigen::MatrixXd, long double >;
+
+extern template class LagrangeInterpolator< double, Eigen::Matrix< long double, Eigen::Dynamic, 1 > >;
+extern template class LagrangeInterpolator< double, Eigen::Matrix< long double, Eigen::Dynamic, 6 > >;
+extern template class LagrangeInterpolator< double, Eigen::Matrix< long double, Eigen::Dynamic,  Eigen::Dynamic > >;
+
+extern template class LagrangeInterpolator< Time, Eigen::Matrix< long double, Eigen::Dynamic, 1 >, long double >;
+extern template class LagrangeInterpolator< Time, Eigen::Matrix< long double, Eigen::Dynamic, 6 >, long double >;
+extern template class LagrangeInterpolator< Time, Eigen::Matrix< long double, Eigen::Dynamic,  Eigen::Dynamic >, long double >;
+#endif
 
 //! Typedef for LagrangeInterpolator with double as both its dependent and independent data type.
 typedef LagrangeInterpolator< double, double > LagrangeInterpolatorDouble;

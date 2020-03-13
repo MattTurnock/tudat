@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -21,7 +21,7 @@
 #include "Tudat/Astrodynamics/Aerodynamics/aerodynamics.h"
 #include "Tudat/Astrodynamics/Aerodynamics/equilibriumWallTemperature.h"
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <boost/make_shared.hpp>
 
 namespace tudat
@@ -516,7 +516,7 @@ double computeAerodynamicLoadFromAcceleration( const Eigen::Vector3d& aerodynami
 }
 
 //! Funtion to compute the equilibrium heat flux experienced by a vehicle
-double computeEquilibriumHeatflux( const boost::function< double( const double ) > heatTransferFunction,
+double computeEquilibriumHeatflux( const std::function< double( const double ) > heatTransferFunction,
                                    const double wallEmmisivity,
                                    const double adiabaticWallTemperature )
 {
@@ -536,8 +536,8 @@ double computeEquilibriumFayRiddellHeatFlux( const double airDensity,
     double adiabaticWallTemperature
             = computeAdiabaticWallTemperature( airTemperature , machNumber );
 
-    boost::function< double( const double ) > heatTransferFunction = boost::bind(
-                &computeFayRiddellHeatFlux, airDensity, airSpeed, airTemperature, noseRadius, _1 );
+    std::function< double( const double ) > heatTransferFunction = std::bind(
+                &computeFayRiddellHeatFlux, airDensity, airSpeed, airTemperature, noseRadius, std::placeholders::_1 );
 
     return computeEquilibriumHeatflux( heatTransferFunction, wallEmissivity, adiabaticWallTemperature );
 }
@@ -563,55 +563,6 @@ double computeAdiabaticWallTemperature(
             = airTemperature * ( 1 + 0.5 * ( ratioSpecificHeats - 1 ) * machNumber * machNumber );
 
     return airTemperature + recoveryFactor * ( totalTemperature - airTemperature );
-}
-
-//! Compute the aerodynamic coefficients from pressure and shear stress acting on element
-Eigen::Vector6d computeAerodynamicCoefficientsFromPressureShearForces(
-        const Eigen::Matrix< double, 3, Eigen::Dynamic >& pressureForceVector,
-        const Eigen::Matrix< double, 3, Eigen::Dynamic >& shearStressVector,
-        const double airDensity,
-        const double airPressure,
-        const double airSpeed,
-        const Eigen::Matrix< double, 3, Eigen::Dynamic >& elementSurfaceNormal,
-        const Eigen::Matrix< double, 1, Eigen::Dynamic >& elementSurfaceArea,
-        const Eigen::Matrix< double, 3, Eigen::Dynamic >& elementMomentArm,
-        const double referenceAerodynamicArea,
-        const double referenceAerodynamicLength )
-{
-    // Initialize output value
-    Eigen::Vector6d aerodynamicCoefficients;
-
-    // Compute dynamic pressure
-    double dynamicPressure = 0.5 * airDensity * airSpeed * airSpeed;
-
-    // Compute pressure and friction coefficient
-    Eigen::Matrix< double, 3, Eigen::Dynamic > pressureCoefficient =
-            ( pressureForceVector - airPressure * elementSurfaceNormal ) / dynamicPressure;
-    Eigen::Matrix< double, 3, Eigen::Dynamic > frictionCoefficient = shearStressVector / dynamicPressure;
-
-    // Compute aerodynamic force coefficients
-    for ( unsigned int i = 0; i < 3; i++ )
-    {
-        aerodynamicCoefficients( i ) = ( pressureCoefficient.row( i ) + frictionCoefficient.row( i ) ).dot(
-                    elementSurfaceArea );
-    }
-
-    // Compute aerodynamic moment coefficients
-    Eigen::Matrix< double, 3, Eigen::Dynamic > temporaryMatrix;
-    temporaryMatrix.resize( 3, pressureForceVector.cols( ) );
-    for ( unsigned int i = 0; i < pressureForceVector.cols( ); i++ )
-    {
-        temporaryMatrix.col( i ) = elementMomentArm.col( i ).cross(
-                    pressureCoefficient.col( i ) + frictionCoefficient.col( i ) );
-    }
-    for ( unsigned int i = 3; i < 6; i++ )
-    {
-        aerodynamicCoefficients( i ) = temporaryMatrix.row( i ).dot( elementSurfaceArea ) / referenceAerodynamicLength;
-    }
-
-    // Return coefficients
-    aerodynamicCoefficients /= - referenceAerodynamicArea;
-    return aerodynamicCoefficients;
 }
 
 } // namespace aerodynamics

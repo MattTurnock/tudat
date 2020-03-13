@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -19,7 +19,7 @@ namespace relativity
 {
 
 //! Initialize global PPN parameters
-boost::shared_ptr< PPNParameterSet > ppnParameterSet = boost::make_shared< PPNParameterSet >( 1.0, 1.0 );
+std::shared_ptr< PPNParameterSet > ppnParameterSet = std::make_shared< PPNParameterSet >( 1.0, 1.0 );
 
 double equivalencePrincipleLpiViolationParameter = 0.0;
 

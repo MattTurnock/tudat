@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -17,7 +17,7 @@ namespace root_finders
 {
 
 //! Function to determine whether a root finder requires any analytical derivatives
-bool doesRootFinderRequireDerivatives( const boost::shared_ptr< RootFinderSettings > rootFinderSettings )
+bool doesRootFinderRequireDerivatives( const std::shared_ptr< RootFinderSettings > rootFinderSettings )
 {
     bool rootFinderRequireDerivatives = -1;
     switch( rootFinderSettings->rootFinderType_ )

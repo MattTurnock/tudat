@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -169,7 +169,6 @@ BOOST_AUTO_TEST_CASE( testSofaEarthRotation )
             180.0 / mathematical_constants::PI;
     BOOST_CHECK_SMALL( std::fabs( directEarthRotationAngle - earthRotationAngle ), 1.0E-12 );
 }
-
 
 BOOST_AUTO_TEST_SUITE_END( )
 

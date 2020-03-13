@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -12,7 +12,7 @@
 #ifndef TUDAT_SPHERE_SEGMENT_H
 #define TUDAT_SPHERE_SEGMENT_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -157,7 +157,7 @@ private:
 };
 
 //! Typedef for shared-pointer to SphereSegment object.
-typedef boost::shared_ptr< SphereSegment > SphereSegmentPointer;
+typedef std::shared_ptr< SphereSegment > SphereSegmentPointer;
 
 } // namespace geometric_shapes
 } // namespace tudat

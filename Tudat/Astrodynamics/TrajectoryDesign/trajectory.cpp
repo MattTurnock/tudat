@@ -215,7 +215,7 @@ bool Trajectory::incorrectSize( )
     // Check the legTypeVector is of the correct size.
     if ( legTypeVector_.size( ) != numberOfLegs_ )
     {
-        std::cerr << "\nIncorrect size of legtypeVector.";
+        std::cerr << "\nIncorrect size of legtypeVector."<<" "<<legTypeVector_.size( )<<" "<<numberOfLegs_;
         return true;
     }
 
@@ -233,12 +233,21 @@ bool Trajectory::incorrectSize( )
         return true;
     }
 
+    if ( minimumPericenterRadiiVector_.size( ) != numberOfLegs_ )
+    {
+        std::cerr << "\nIncorrect size of minimumPericenterRadiiVector_.";
+        return true;
+    }
+
     // Check the size of the trajectoryDefiningParameterVector.
     if ( trajectoryVariableVector_.size( ) != checkTrajectoryVariableVectorSize( ) )
     {
-        std::cerr << "\nIncorrect size of trajectoryDefiningParameterVector.";
+        std::cerr << "\nIncorrect size of trajectoryDefiningParameterVector. "<<checkTrajectoryVariableVectorSize( )<<" "<<
+                     trajectoryVariableVector_.size( )<<std::endl;;
         return true;
     }
+
+
     return false;
 }
 
@@ -254,7 +263,7 @@ void Trajectory::prepareVelocityAndPositionVectors( )
     Eigen::Vector3d temp ( TUDAT_NAN, TUDAT_NAN, TUDAT_NAN );
     for ( int counter = 0; counter < numberOfLegs_; counter++)
     {
-        spacecraftVelocityPtrVector_[ counter ] = boost::make_shared< Eigen::Vector3d > ( temp );
+        spacecraftVelocityPtrVector_[ counter ] = std::make_shared< Eigen::Vector3d > ( temp );
     }
 }
 
@@ -297,7 +306,7 @@ void Trajectory::prepareLegs( )
     for ( int counter = 0; counter < numberOfLegs_; counter++)
     {
         // Variable that saves the current leg.
-        boost::shared_ptr< MissionLeg > missionLeg;
+        std::shared_ptr< MissionLeg > missionLeg;
 
         // Depending on the leg type, a different interplanetary leg is to be added. In this switch
         // structure this leg is added and the accompanying variables are linked.
@@ -306,8 +315,8 @@ void Trajectory::prepareLegs( )
             case mga_Departure:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< DepartureLegMga > departureLegMga =
-                        boost::make_shared < DepartureLegMga >(
+                std::shared_ptr< DepartureLegMga > departureLegMga =
+                        std::make_shared < DepartureLegMga >(
                              planetPositionVector_[ counter ],
                              planetPositionVector_[ counter + 1],
                              trajectoryVariableVector_[ counter + 1 ],
@@ -315,9 +324,11 @@ void Trajectory::prepareLegs( )
                              centralBodyGravitationalParameter_,
                              gravitationalParameterVector_[ counter ],
                              semiMajorAxesVector_[ departureOrCaptureCounter ],
-                             eccentricityVector_[ departureOrCaptureCounter ] );
+                             eccentricityVector_[ departureOrCaptureCounter ],
+                        includeDepartureDeltaV_ );
 
                 missionLeg = departureLegMga;
+                departureLeg_ = departureLegMga;
 
                 // Update the departure and capture counter.
                 departureOrCaptureCounter++;
@@ -327,8 +338,8 @@ void Trajectory::prepareLegs( )
             case mga_Swingby:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< SwingbyLegMga > swingbyLegMga =
-                        boost::make_shared< SwingbyLegMga >(
+                std::shared_ptr< SwingbyLegMga > swingbyLegMga =
+                        std::make_shared< SwingbyLegMga >(
                            planetPositionVector_[ counter ],
                            planetPositionVector_[ counter + 1],
                            trajectoryVariableVector_[ counter + 1 ],
@@ -339,14 +350,15 @@ void Trajectory::prepareLegs( )
                            minimumPericenterRadiiVector_[ counter ] );
 
                 missionLeg = swingbyLegMga;
+
                 break;
             }
 
             case mga1DsmPosition_Departure:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< DepartureLegMga1DsmPosition > departureLegMga1DsmPosition =
-                        boost::make_shared< DepartureLegMga1DsmPosition >(
+                std::shared_ptr< DepartureLegMga1DsmPosition > departureLegMga1DsmPosition =
+                        std::make_shared< DepartureLegMga1DsmPosition >(
                              planetPositionVector_[ counter ],
                              planetPositionVector_[ counter + 1],
                              trajectoryVariableVector_[ counter + 1 ],
@@ -362,10 +374,12 @@ void Trajectory::prepareLegs( )
                              trajectoryVariableVector_[ numberOfLegs_ +
                                    additionalVariableCounter + 3 ],
                              trajectoryVariableVector_[ numberOfLegs_ +
-                                   additionalVariableCounter + 4 ] );
+                                   additionalVariableCounter + 4 ],
+                        includeDepartureDeltaV_  );
 
 
                 missionLeg = departureLegMga1DsmPosition;
+                departureLeg_ = departureLegMga1DsmPosition;
 
                 // Update the additional variable counter
                 additionalVariableCounter += 4;
@@ -378,8 +392,8 @@ void Trajectory::prepareLegs( )
             case mga1DsmPosition_Swingby:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< SwingbyLegMga1DsmPosition > swingbyLegMga1DsmPosition =
-                        boost::make_shared< SwingbyLegMga1DsmPosition >(
+                std::shared_ptr< SwingbyLegMga1DsmPosition > swingbyLegMga1DsmPosition =
+                        std::make_shared< SwingbyLegMga1DsmPosition >(
                            planetPositionVector_[ counter ],
                            planetPositionVector_[ counter + 1],
                            trajectoryVariableVector_[ counter + 1 ],
@@ -407,8 +421,8 @@ void Trajectory::prepareLegs( )
             case mga1DsmVelocity_Departure:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< DepartureLegMga1DsmVelocity > departureLegMga1DsmVelocity =
-                        boost::make_shared< DepartureLegMga1DsmVelocity >(
+                std::shared_ptr< DepartureLegMga1DsmVelocity > departureLegMga1DsmVelocity =
+                        std::make_shared< DepartureLegMga1DsmVelocity >(
                              planetPositionVector_[ counter ],
                              planetPositionVector_[ counter + 1],
                              trajectoryVariableVector_[ counter + 1 ],
@@ -424,9 +438,11 @@ void Trajectory::prepareLegs( )
                              trajectoryVariableVector_[ numberOfLegs_ +
                                     additionalVariableCounter + 3 ],
                              trajectoryVariableVector_[ numberOfLegs_ +
-                                    additionalVariableCounter + 4 ] );
+                                    additionalVariableCounter + 4 ],
+                        includeDepartureDeltaV_  );
 
                 missionLeg = departureLegMga1DsmVelocity;
+                departureLeg_ = departureLegMga1DsmVelocity;
 
                 // Update the additional variable counter
                 additionalVariableCounter += 4;
@@ -439,8 +455,8 @@ void Trajectory::prepareLegs( )
             case mga1DsmVelocity_Swingby:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< SwingbyLegMga1DsmVelocity > swingbyLegMga1DsmVelocity =
-                        boost::make_shared< SwingbyLegMga1DsmVelocity >(
+                std::shared_ptr< SwingbyLegMga1DsmVelocity > swingbyLegMga1DsmVelocity =
+                        std::make_shared< SwingbyLegMga1DsmVelocity >(
                            planetPositionVector_[ counter ],
                            planetPositionVector_[ counter + 1],
                            trajectoryVariableVector_[ counter + 1 ],
@@ -467,8 +483,8 @@ void Trajectory::prepareLegs( )
             case capture:
             {
                 // Initialize leg with the corresponding variables/pointers.
-                boost::shared_ptr< CaptureLeg > captureLeg =
-                        boost::make_shared< CaptureLeg >(
+                std::shared_ptr< CaptureLeg > captureLeg =
+                        std::make_shared< CaptureLeg >(
                              planetPositionVector_[ counter ],
                              trajectoryVariableVector_[ counter + 1 ],
                              planetVelocityVector_[ counter ],
@@ -476,9 +492,11 @@ void Trajectory::prepareLegs( )
                              gravitationalParameterVector_[ counter ],
                              spacecraftVelocityPtrVector_[ counter - 1],
                              semiMajorAxesVector_[ departureOrCaptureCounter ],
-                             eccentricityVector_[ departureOrCaptureCounter ] );
+                             eccentricityVector_[ departureOrCaptureCounter ],
+                        includeArrivalDeltaV_ );
 
                 missionLeg = captureLeg;
+                captureLeg_ = captureLeg;
 
                 // Update the departure and capture counter.
                 departureOrCaptureCounter++;

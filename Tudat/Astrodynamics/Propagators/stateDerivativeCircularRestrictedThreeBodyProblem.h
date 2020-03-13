@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -15,7 +15,7 @@
 #ifndef TUDAT_STATE_DERIVATIVE_CIRCULAR_RESTRICTED_THREE_BODY_PROBLEM_H
 #define TUDAT_STATE_DERIVATIVE_CIRCULAR_RESTRICTED_THREE_BODY_PROBLEM_H
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -64,7 +64,7 @@ private:
 };
 
 //! Typedef for shared-pointer to StateDerivativeCircularRestrictedThreeBodyProblem object.
-typedef boost::shared_ptr< StateDerivativeCircularRestrictedThreeBodyProblem >
+typedef std::shared_ptr< StateDerivativeCircularRestrictedThreeBodyProblem >
 StateDerivativeCircularRestrictedThreeBodyProblemPointer;
 
 } // namespace propagators

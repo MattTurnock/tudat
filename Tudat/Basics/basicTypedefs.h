@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -46,6 +46,7 @@ typedef Eigen::Matrix< int, 6, 6 > Matrix6i;
 
 //! Typedef for Matrix6f.
 typedef Eigen::Matrix< float, 6, 6 > Matrix6f;
+
 
 //! Typedef for Matrix6d.
 typedef Eigen::Matrix< double, 6, 6 > Matrix6d;

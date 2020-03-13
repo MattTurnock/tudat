@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -26,14 +26,15 @@ namespace earth_orientation
 //! Constructor for (CIO-based) precession-nutation calculation object.
 PrecessionNutationCalculator::PrecessionNutationCalculator(
         basic_astrodynamics::IAUConventions precessionNutationTheory,
-        boost::shared_ptr< interpolators::OneDimensionalInterpolator< double, Eigen::Vector2d > >
+        std::shared_ptr< interpolators::OneDimensionalInterpolator< double, Eigen::Vector2d > >
         dailyCorrectionInterpolator ):
+    precessionNutationTheory_( precessionNutationTheory ),
     dailyCorrectionInterpolator_( dailyCorrectionInterpolator )
 {
     // Link selected SOFA function wrapper for direct calculation of precession-nutation.
     nominalCipPositionFunction_ =
-            boost::bind( sofa_interface::getPositionOfCipInGcrs,
-                         _1, basic_astrodynamics::JULIAN_DAY_ON_J2000, precessionNutationTheory );
+            std::bind( sofa_interface::getPositionOfCipInGcrs,
+                         std::placeholders::_1, basic_astrodynamics::JULIAN_DAY_ON_J2000, precessionNutationTheory );
 }
 
 //! Function to calculate the position of CIP in GCRS (CIO-based precession-nutation) and CIO-locator.

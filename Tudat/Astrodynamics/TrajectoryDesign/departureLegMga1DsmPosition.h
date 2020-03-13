@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -25,6 +25,7 @@
 
 namespace tudat
 {
+
 namespace transfer_trajectories
 {
 
@@ -57,6 +58,7 @@ public:
      *  \param dimensionlessRadiusDsm the dimensionless radius of the DSM manuever, see Musegaas, 2012 for the definition.
      *  \param inPlaneAngle the in plane angle of the DSM.
      *  \param outOfPlaneAngle the out of plane angle of the DSM.
+     *  \param includeDepartureDeltaV Boolean denoting whether to include the Delta V of departure.
      */
     DepartureLegMga1DsmPosition ( const Eigen::Vector3d& departureBodyPosition,
                                   const Eigen::Vector3d& arrivalBodyPosition,
@@ -69,7 +71,8 @@ public:
                                   const double dsmTimeOfFlightFraction,
                                   const double dimensionlessRadiusDsm,
                                   const double inPlaneAngle,
-                                  const double outOfPlaneAngle ):
+                                  const double outOfPlaneAngle,
+                                  const bool includeDepartureDeltaV = true ):
         DepartureLeg( departureBodyPosition,
                       arrivalBodyPosition,
                       timeOfFlight,
@@ -77,7 +80,7 @@ public:
                       centralBodyGravitationalParameter,
                       departureBodyGravitationalParameter,
                       semiMajorAxis,
-                      eccentricity),
+                      eccentricity, includeDepartureDeltaV ),
         dsmTimeOfFlightFraction_( dsmTimeOfFlightFraction ),
         dimensionlessRadiusDsm_( dimensionlessRadiusDsm ),
         inPlaneAngle_( inPlaneAngle ),
@@ -94,7 +97,6 @@ public:
      */
     void calculateLeg( Eigen::Vector3d& velocityBeforeArrivalBody,
                        double& deltaV );
-
 
     //! Calculate intermediate positions and their corresponding times.
     /*!
@@ -143,6 +145,7 @@ public:
 protected:
 
 private:
+
     //! The fraction of the time of flight of the DSM.
     /*!
      * The fraction of the time of flight of the corresponding leg at which the DSM is performed.
@@ -193,12 +196,6 @@ private:
      */
     Eigen::Vector3d velocityAfterDsm_;
 
-    //! The deltaV of the departure maneuver.
-    /*!
-     * The deltaV of the departure maneuver.
-     */
-    double deltaVDeparture_;
-
     //! The deltaV of the DSM.
     /*!
      * The deltaV of the deep space maneuver.
@@ -206,7 +203,9 @@ private:
     double deltaVDsm_;
 
 };
+
 } // namespace transfer_trajectories
+
 } // namespace tudat
 
 #endif // TUDAT_DEPARTURE_LEG_MGA_1DSM_POSITION_H

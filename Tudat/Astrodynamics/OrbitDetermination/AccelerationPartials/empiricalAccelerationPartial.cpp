@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -42,7 +42,7 @@ Eigen::Matrix< double, 1, 6 > calculateNumericalPartialOfTrueAnomalyWrtState(
         // Check validity of result
         if( upPerturbedTrueAnomaly != upPerturbedTrueAnomaly )
         {
-            std::cout << "Error 1 in partial of true anomaly wrt cartesian state, element" << i
+            std::cerr << "Error 1 in partial of true anomaly wrt cartesian state, element" << i
                       << ", keplerian state: " << std::endl
                       << convertCartesianToKeplerianElements( perturbedCartesianElements, gravitationalParameter ).transpose( ) << std::endl
                       << perturbedCartesianElements.transpose( ) << std::endl;
@@ -56,7 +56,7 @@ Eigen::Matrix< double, 1, 6 > calculateNumericalPartialOfTrueAnomalyWrtState(
         // Check validity of result
         if( downPerturbedTrueAnomaly != downPerturbedTrueAnomaly )
         {
-            std::cout << "Error 2 in partial of true anomaly wrt cartesian state, element" << i
+            std::cerr << "Error 2 in partial of true anomaly wrt cartesian state, element" << i
                       << ", keplerian state: " << std::endl
                       << convertCartesianToKeplerianElements( perturbedCartesianElements, gravitationalParameter ).transpose( ) << std::endl
                       << perturbedCartesianElements.transpose( ) << std::endl;
@@ -68,7 +68,7 @@ Eigen::Matrix< double, 1, 6 > calculateNumericalPartialOfTrueAnomalyWrtState(
         // Check validity of result
         if( partial( 0, i ) != partial( 0, i ) )
         {
-            std::cout << "Error 2 in partial of true anomaly wrt cartesian state, element" << i << std::endl;
+            std::cerr << "Error 2 in partial of true anomaly wrt cartesian state, element" << i << std::endl;
         }
     }
 
@@ -76,12 +76,12 @@ Eigen::Matrix< double, 1, 6 > calculateNumericalPartialOfTrueAnomalyWrtState(
 }
 
 //! Function for setting up and retrieving a function returning a partial w.r.t. a vector parameter.
-std::pair< boost::function< void( Eigen::MatrixXd& ) >, int > EmpiricalAccelerationPartial::getParameterPartialFunction(
-        boost::shared_ptr< estimatable_parameters::EstimatableParameter< Eigen::VectorXd > > parameter )
+std::pair< std::function< void( Eigen::MatrixXd& ) >, int > EmpiricalAccelerationPartial::getParameterPartialFunction(
+        std::shared_ptr< estimatable_parameters::EstimatableParameter< Eigen::VectorXd > > parameter )
 {
     using namespace tudat::estimatable_parameters;
 
-    boost::function< void( Eigen::MatrixXd& ) > partialFunction;
+    std::function< void( Eigen::MatrixXd& ) > partialFunction;
     int numberOfRows = 0;
 
     if( parameter->getParameterName( ).second.first == acceleratedBody_ )
@@ -90,19 +90,25 @@ std::pair< boost::function< void( Eigen::MatrixXd& ) >, int > EmpiricalAccelerat
         {
         case empirical_acceleration_coefficients:
         {
-            partialFunction = boost::bind(
-                        &EmpiricalAccelerationPartial::wrtEmpiricalAccelerationCoefficientFromIndices, this, parameter->getParameterSize( ),
-                        boost::dynamic_pointer_cast< EmpiricalAccelerationCoefficientsParameter >( parameter )->getIndices( ), _1 );
-            numberOfRows = parameter->getParameterSize( );
-            break;
+            if( parameter->getParameterName( ).second.second == acceleratingBody_ )
+            {
+                partialFunction = std::bind(
+                            &EmpiricalAccelerationPartial::wrtEmpiricalAccelerationCoefficientFromIndices, this, parameter->getParameterSize( ),
+                            std::dynamic_pointer_cast< EmpiricalAccelerationCoefficientsParameter >( parameter )->getIndices( ), std::placeholders::_1 );
+                numberOfRows = parameter->getParameterSize( );
+                break;
+            }
         }
         case arc_wise_empirical_acceleration_coefficients:
         {
-            partialFunction = boost::bind(
-                        &EmpiricalAccelerationPartial::wrtArcWiseEmpiricalAccelerationCoefficient, this,
-                        boost::dynamic_pointer_cast< ArcWiseEmpiricalAccelerationCoefficientsParameter >( parameter ), _1 );
-            numberOfRows = parameter->getParameterSize( );
-            break;
+            if( parameter->getParameterName( ).second.second == acceleratingBody_ )
+            {
+                partialFunction = std::bind(
+                            &EmpiricalAccelerationPartial::wrtArcWiseEmpiricalAccelerationCoefficient, this,
+                            std::dynamic_pointer_cast< ArcWiseEmpiricalAccelerationCoefficientsParameter >( parameter ), std::placeholders::_1 );
+                numberOfRows = parameter->getParameterSize( );
+                break;
+            }
         }
         default:
             break;
@@ -181,7 +187,7 @@ void EmpiricalAccelerationPartial::update( const double currentTime )
 
 //! Function to compute the partial w.r.t. arcwise empirical acceleration components
 void EmpiricalAccelerationPartial::wrtArcWiseEmpiricalAccelerationCoefficient(
-        boost::shared_ptr< estimatable_parameters::ArcWiseEmpiricalAccelerationCoefficientsParameter > parameter,
+        std::shared_ptr< estimatable_parameters::ArcWiseEmpiricalAccelerationCoefficientsParameter > parameter,
         Eigen::MatrixXd& partialDerivativeMatrix )
 {
     // Compute partial derivatives for current arc
@@ -191,7 +197,7 @@ void EmpiricalAccelerationPartial::wrtArcWiseEmpiricalAccelerationCoefficient(
                 singleArcParameterSize, parameter->getIndices( ), partialWrtCurrentArcAccelerations );
 
     // Retrieve arc of current time.
-    boost::shared_ptr< interpolators::LookUpScheme< double > > currentArcIndexLookUp =
+    std::shared_ptr< interpolators::LookUpScheme< double > > currentArcIndexLookUp =
             parameter->getArcTimeLookupScheme( );
     int currentArc = currentArcIndexLookUp->findNearestLowerNeighbour( currentTime_ );
 
@@ -200,7 +206,6 @@ void EmpiricalAccelerationPartial::wrtArcWiseEmpiricalAccelerationCoefficient(
     partialDerivativeMatrix.block(
                 0, currentArc * singleArcParameterSize, 3, singleArcParameterSize ) =
             partialWrtCurrentArcAccelerations;
-
 }
 
 //! Function to compute the partial w.r.t. time-independent empirical acceleration components

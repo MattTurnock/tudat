@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -16,7 +16,8 @@
 
 #include <map>
 
-#include <boost/function.hpp>
+#include <functional>
+#include <vector>
 
 #include <Eigen/Core>
 #include <Eigen/SVD>
@@ -41,8 +42,8 @@ Eigen::Vector4d convertQuaternionToVectorFormat( const Eigen::Quaterniond& quate
 //! Function to put a vector in 'quaternion format', i.e. a Quaterniond.
 /*!
  * Function to put a vector in 'quaternion format', i.e. a Quaterniond.
- * \param Vector format of input quaternion.
- * \return quaternion Quaternion that is to be put into vector format.
+ * \param vector Vector format of input quaternion.
+ * \return Quaternion that is to be put into vector format.
  */
 Eigen::Quaterniond convertVectorToQuaternionFormat( const Eigen::Vector4d& vector );
 
@@ -131,7 +132,7 @@ double getVectorNorm( const Eigen::Vector3d& vector );
  * \param vectorFunction Function returning the vector for which the norm is to be computed
  * \return Vector norm
  */
-double getVectorNormFromFunction( const boost::function< Eigen::Vector3d( ) > vectorFunction );
+double getVectorNormFromFunction( const std::function< Eigen::Vector3d( ) > vectorFunction );
 
 //! Flip matrix rows.
 /*!
@@ -156,7 +157,7 @@ static inline void flipMatrixRows( Eigen::MatrixXd& matrixToFlip )
 }
 
 Eigen::Vector3d evaluateSecondBlockInStateVector(
-        const boost::function< Eigen::Vector6d( const double ) > stateFunction,
+        const std::function< Eigen::Vector6d( const double ) > stateFunction,
         const double time );
 
 double computeNormOfVectorDifference( const Eigen::Vector3d& vector0,
@@ -205,6 +206,17 @@ bool doesMatrixHaveNanEntries( const Eigen::Matrix< StateScalarType, NumberOfRow
  * \return RMS of input vector
  */
 double getVectorEntryRootMeanSquare( const Eigen::VectorXd& inputVector );
+
+//! Function to compute the partial derivative of a rotation matrix w.r.t. its associated quaterion elements
+/*!
+ * Function to compute the partial derivative of a rotation matrix w.r.t. its associated quaterion elements
+ * \param quaternionVector Rotation quaternion in vector format
+ * \param partialDerivatives List of required partial derivatives (returned by reference)
+ */
+void computePartialDerivativeOfRotationMatrixWrtQuaternion(
+        const Eigen::Vector4d quaternionVector,
+        std::vector< Eigen::Matrix3d >& partialDerivatives );
+
 
 } // namespace linear_algebra
 

@@ -1,4 +1,4 @@
-#    Copyright (c) 2010-2018, Delft University of Technology
+#    Copyright (c) 2010-2019, Delft University of Technology
 #    All rigths reserved
 #
 #    This file is part of the Tudat. Redistribution and use in source and
@@ -12,6 +12,14 @@ cmake_minimum_required( VERSION 2.6 )
 
 # Specific Tudat project name.
 project( Tudat )
+
+
+
+# Tudat-specific options
+option(BUILD_WITH_SOCIS_2019 "Build Tudat with 2019 SOCIS functionality." OFF)
+option(BUILD_WITH_FILTERS "Build Tudat with preliminary Kalman Filter functionality." OFF)
+option(BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS  "Build Tudat with high-precision (>16 digits) capabilities. These may cause excessive (>3 GB)) RAM usage with gcc/mingw." OFF)
+option(BUILD_WITH_PROPAGATION_TESTS "Build Tudat with unit tests involving long (> 30 s) propagations. Total unit test run time may be >10 minutes." ON)
 
 # Load UserSettings.txt
 if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
@@ -143,7 +151,6 @@ endif()
 # is "OFF". NB: It is important this section is placed AFTER the "UserSettings.txt" file is
 # included, to ensure that that the correct indiciation is given for whether SPICE should be
 # included or not has been selected.
-option(USE_CSPICE "build Tudat with CSPICE enabled" ON) # OFF is the default
 if(NOT USE_CSPICE)
  message(STATUS "SPICE disabled!")
  add_definitions(-DUSE_CSPICE=0)
@@ -167,7 +174,6 @@ endif()
 # JSON
 #
 # Set whether to use the JSON library.
-option(USE_JSON "build Tudat with JSON enabled" ON)
 if(NOT USE_JSON)
  message(STATUS "JSON disabled!")
  add_definitions(-DUSE_JSON=0)
@@ -195,7 +201,6 @@ endif()
 # is "OFF". NB: It is important this section is placed AFTER the "UserSettings.txt" file is
 # included, to ensure that that the correct indiciation is given for whether SOFA should be
 # included or not has been selected.
-option(USE_SOFA "build Tudat with Sofa enabled" ON) # OFF is the default
 if(NOT USE_SOFA)
  message(STATUS "SOFA disabled!")
  add_definitions(-DUSE_SOFA=0)
@@ -220,7 +225,6 @@ endif()
 # Set whether to use the NRLMSISE-00 library integration with Tudat or not. If it not supplied by the
 # user (either directly as an argument or through the "UserSettings.txt" file, the default setting
 # is "ON").
-option(USE_NRLMSISE00 "build Tudat with NRLMSISE-00 enabled" ON)
 if(NOT USE_NRLMSISE00)
  message(STATUS "NRLMSISE-00 disabled!")
  add_definitions(-DUSE_NRLMSISE00=0)
@@ -238,13 +242,36 @@ else()
  endif( )
 endif()
 
+
+#
+# Pagmo
+#
+# Set whether to use the Pagmo library integration with Tudat or not. If it not supplied by the
+# user (either directly as an argument or through the "UserSettings.txt" file, the default setting
+# is "ON").
+if(NOT USE_PAGMO)
+  message(STATUS "PAGMO disabled!")
+  add_definitions(-DUSE_PAGMO=0)
+else()
+  message(STATUS "PAGMO enabled!")
+  # Find USE_PAGMO library on local system.
+  find_package(PaGMO2)
+  add_definitions(-DUSE_PAGMO=1)
+
+ # Include Pagmo directories.
+ if(NOT APPLE OR APPLE_INCLUDE_FORCE)
+   include_directories(SYSTEM AFTER "${PAGMO_INCLUDE_DIR}")
+ else( )
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem \"${PAGMO_INCLUDE_DIR}\"")
+ endif( )
+endif()
+
 #
 # GSL
 #
 # Set whether to use the GSL library integration with Tudat or not. If it not supplied by the
 # user (either directly as an argument or through the "UserSettings.txt" file, the default setting
 # is "OFF").
-option(USE_GSL "build Tudat with GSL enabled" OFF)
 if(NOT USE_GSL)
  message(STATUS "GSL disabled!")
  add_definitions(-DUSE_GSL=0)
@@ -262,51 +289,16 @@ else()
  endif( )
 endif()
 
-option(COMPILE_HIGH_ACCURACY_ESTIMATION_TESTS  "Compiling unit tests for state estimation. These may cause excessive (>3 GB)) RAM usage with gcc/mingw." ON)
-option(COMPILE_PROPAGATION_TESTS "Compiling unit tests involving long (> 30 s) propagations. Total unit test run time may be > 5-10 minutes." ON)
-
-# Create lists of static libraries for ease of use
-list(APPEND TUDAT_EXTERNAL_LIBRARIES "")
-list(APPEND TUDAT_EXTERNAL_INTERFACE_LIBRARIES "")
-list(APPEND TUDAT_ITRS_LIBRARIES "")
-
-if(USE_SOFA)
- list(APPEND TUDAT_EXTERNAL_LIBRARIES sofa)
- list(APPEND TUDAT_EXTERNAL_INTERFACE_LIBRARIES tudat_sofa_interface )
- list(APPEND TUDAT_ITRS_LIBRARIES tudat_earth_orientation )
+if(NOT BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS)
+ message(STATUS "Extended precision propagation disabled!")
+ add_definitions(-DBUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS=0)
+else()
+    message(STATUS "Extended precision propagation enabled!")
+ add_definitions(-DBUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS=1)
 endif()
 
-if(USE_CSPICE)
- list(APPEND TUDAT_EXTERNAL_LIBRARIES cspice)
- list(APPEND TUDAT_EXTERNAL_INTERFACE_LIBRARIES tudat_spice_interface )
-endif()
-
-if(USE_JSON)
-  list(APPEND TUDAT_APPLICATION_EXTERNAL_LIBRARIES nlohmann_json)
-endif()
-
-if(USE_NRLMSISE00)
- list(APPEND TUDAT_EXTERNAL_LIBRARIES nrlmsise00)
-endif()
-
-if(USE_GSL)
- list(APPEND TUDAT_EXTERNAL_LIBRARIES gsl)
-endif()
-
-
-list(APPEND TUDAT_PROPAGATION_LIBRARIES tudat_trajectory_design tudat_simulation_setup tudat_ground_stations tudat_propagators
-    tudat_aerodynamics tudat_system_models tudat_geometric_shapes tudat_relativity tudat_gravitation tudat_mission_segments
-    tudat_electro_magnetism tudat_propulsion tudat_ephemerides ${TUDAT_ITRS_LIBRARIES} tudat_numerical_integrators tudat_reference_frames
-    tudat_statistics tudat_propagators ${TUDAT_EXTERNAL_INTERFACE_LIBRARIES} tudat_basic_astrodynamics tudat_root_finders tudat_filters
-    tudat_basic_mathematics tudat_input_output tudat_basics ${TUDAT_EXTERNAL_LIBRARIES})
-
-list(APPEND TUDAT_ESTIMATION_LIBRARIES tudat_trajectory_design tudat_simulation_setup tudat_observation_models tudat_ground_stations tudat_acceleration_partials
-    tudat_observation_partials tudat_estimatable_parameters tudat_orbit_determination  tudat_propagators
-    tudat_aerodynamics tudat_system_models tudat_geometric_shapes tudat_relativity tudat_gravitation tudat_mission_segments
-    tudat_electro_magnetism tudat_propulsion tudat_ephemerides ${TUDAT_ITRS_LIBRARIES} tudat_numerical_integrators tudat_reference_frames
-    tudat_statistics tudat_propagators ${TUDAT_EXTERNAL_INTERFACE_LIBRARIES} tudat_basic_astrodynamics tudat_root_finders tudat_filters
-    tudat_basic_mathematics tudat_input_output tudat_basics ${TUDAT_EXTERNAL_LIBRARIES})
-
+# Set compiler based on preferences (e.g. USE_CLANG) and system.
+include(tudatLinkLibraries)
 
 # Set sub-directories.
 set(SUBDIRS ${APPLICATIONSDIR} ${ASTRODYNAMICSDIR} ${BASICSDIR} ${INPUTOUTPUTDIR} ${MATHEMATICSDIR} ${EXTERNALDIR} ${SIMULATIONSETUPDIR})

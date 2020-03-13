@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -9,8 +9,8 @@
  */
 
 
-#include "Tudat/Astrodynamics/ObservationModels/ObservableCorrections/firstOrderRelativisticLightTimeCorrection.h"
-#include "Tudat/Astrodynamics/OrbitDetermination/LightTimeCorrectionPartials/firstOrderRelativisticLightTimeCorrectionPartial.h"
+#include "Tudat/Astrodynamics/ObservationModels/ObservableCorrections/firstOrderRelativisticCorrection.h"
+#include "Tudat/Astrodynamics/OrbitDetermination/LightTimeCorrectionPartials/firstOrderRelativisticPartial.h"
 #include "Tudat/SimulationSetup/EstimationSetup/createLightTimeCorrectionPartials.h"
 
 
@@ -21,10 +21,10 @@ namespace observation_partials
 {
 
 //! Function to create a partial objects from list of light time corrections.
-std::vector< boost::shared_ptr< LightTimeCorrectionPartial > > createLightTimeCorrectionPartials(
-        const std::vector< boost::shared_ptr< observation_models::LightTimeCorrection > >& lightTimeCorrectionList )
+std::vector< std::shared_ptr< LightTimeCorrectionPartial > > createLightTimeCorrectionPartials(
+        const std::vector< std::shared_ptr< observation_models::LightTimeCorrection > >& lightTimeCorrectionList )
 {
-    std::vector< boost::shared_ptr< LightTimeCorrectionPartial > > partialList;
+    std::vector< std::shared_ptr< LightTimeCorrectionPartial > > partialList;
 
     // Iterate over all light time corrections
     for( unsigned int i = 0; i < lightTimeCorrectionList.size( ); i++ )
@@ -34,10 +34,10 @@ std::vector< boost::shared_ptr< LightTimeCorrectionPartial > > createLightTimeCo
         {
         case observation_models::first_order_relativistic:
         {
-            boost::shared_ptr< observation_models::FirstOrderLightTimeCorrectionCalculator > currentCorrection =
-                    boost::dynamic_pointer_cast< observation_models::FirstOrderLightTimeCorrectionCalculator >(
+            std::shared_ptr< observation_models::FirstOrderLightTimeCorrectionCalculator > currentCorrection =
+                    std::dynamic_pointer_cast< observation_models::FirstOrderLightTimeCorrectionCalculator >(
                         lightTimeCorrectionList.at( i ) );
-            if( currentCorrection == NULL )
+            if( currentCorrection == nullptr )
             {
                 throw std::runtime_error( "Error when making first order light time correction partial, type id observation_models::first_order_relativistic not consistent with class type." );
             }
@@ -45,7 +45,7 @@ std::vector< boost::shared_ptr< LightTimeCorrectionPartial > > createLightTimeCo
             {
                 // Create partial of first-order relativistic light-time correction
                 partialList.push_back(
-                            boost::make_shared< FirstOrderRelativisticLightTimeCorrectionPartial >( currentCorrection ) );
+                            std::make_shared< FirstOrderRelativisticLightTimeCorrectionPartial >( currentCorrection ) );
             }
 
             break;

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -18,6 +18,7 @@
 #include "Tudat/External/SpiceInterface/spiceInterface.h"
 #include "Tudat/SimulationSetup/EstimationSetup/createCartesianStatePartials.h"
 #include "Tudat/Astrodynamics/OrbitDetermination/ObservationPartials/rotationMatrixPartial.h"
+#include "Tudat/Astrodynamics/ReferenceFrames/referenceFrameTransformations.h"
 #include "Tudat/InputOutput/basicInputOutput.h"
 
 namespace tudat
@@ -39,15 +40,15 @@ BOOST_AUTO_TEST_CASE( testSimpleRotationalEphemerisPartials )
 
     // Create rotation model
     double nominalRotationRate = 2.0 * mathematical_constants::PI / 86400.0;
-    boost::shared_ptr< SimpleRotationalEphemeris > rotationalEphemeris =
-            boost::make_shared< SimpleRotationalEphemeris >(
+    std::shared_ptr< SimpleRotationalEphemeris > rotationalEphemeris =
+            std::make_shared< SimpleRotationalEphemeris >(
                 spice_interface::computeRotationQuaternionBetweenFrames( "ECLIPJ2000", "IAU_Earth", 1.0E7 ),
                 nominalRotationRate, 1.0E7, "ECLIPJ2000", "IAU_Earth" );
 
     {
         // Create partial object.
-        boost::shared_ptr< RotationMatrixPartialWrtConstantRotationRate > rotationMatrixPartialObject =
-                boost::make_shared< RotationMatrixPartialWrtConstantRotationRate >( rotationalEphemeris );
+        std::shared_ptr< RotationMatrixPartialWrtConstantRotationRate > rotationMatrixPartialObject =
+                std::make_shared< RotationMatrixPartialWrtConstantRotationRate >( rotationalEphemeris );
 
         // Compute partial analytically
         double testTime = 1.0E6;
@@ -103,8 +104,8 @@ BOOST_AUTO_TEST_CASE( testSimpleRotationalEphemerisPartials )
 
     {
         // Create partial object.
-        boost::shared_ptr< RotationMatrixPartialWrtPoleOrientation > rotationMatrixPartialObject =
-                boost::make_shared< RotationMatrixPartialWrtPoleOrientation >( rotationalEphemeris );
+        std::shared_ptr< RotationMatrixPartialWrtPoleOrientation > rotationMatrixPartialObject =
+                std::make_shared< RotationMatrixPartialWrtPoleOrientation >( rotationalEphemeris );
 
         // Compute partial analytically
         double testTime = 1.0E6;
@@ -121,7 +122,7 @@ BOOST_AUTO_TEST_CASE( testSimpleRotationalEphemerisPartials )
 
         // Compute partial numerically.
         double perturbation = 1.0E-6;
-        {          
+        {
 
 
             // Compute partial for right ascension numerically.
@@ -213,6 +214,84 @@ BOOST_AUTO_TEST_CASE( testSimpleRotationalEphemerisPartials )
                         BOOST_CHECK_SMALL( std::fabs( matrixDifference( i, j ) ), 1.0E-13 );
                     }
                 }
+            }
+        }
+    }
+}
+
+//! Test whether partial derivatives of rotation matrix computed by SynchronousRotationalEphemeris works correctly
+BOOST_AUTO_TEST_CASE( testSynchronousRotationPartials )
+{
+    // Define nominal state
+    Eigen::Vector6d nominalState =
+            tudat::spice_interface::getBodyCartesianStateAtEpoch(
+                                       "Mercury", "SSB", "ECLIPJ2000", "None", 1.0E7 );
+
+    // Define nominal state function
+    Eigen::Vector6d currentState = nominalState;
+    std::function< Eigen::Vector6d( const double, bool ) > relativeStateFunction =
+            [ & ]( const double, bool ){ return currentState; };
+
+    // Create rotation model
+    std::shared_ptr< tudat::ephemerides::SynchronousRotationalEphemeris > synchronousRotationModel =
+            std::make_shared< ephemerides::SynchronousRotationalEphemeris >(
+                relativeStateFunction, "SSB", "Mercury_Fixed", "ECLIPJ2000" );
+
+    // Create rotation partial model
+    std::shared_ptr< RotationMatrixPartial > rotationMatrixPartialObject =
+            std::make_shared< SynchronousRotationMatrixPartialWrtTranslationalState >( synchronousRotationModel );
+
+    // Define test settings
+    double testTime = 1.0E7;
+    double positionPerturbation = 10000.0;
+    double velocityPerturbation = 0.1;
+
+    // Test partials w.r.t. position and velocity components
+    std::vector< Eigen::Matrix3d > rotationMatrixPartials =
+            rotationMatrixPartialObject->calculatePartialOfRotationMatrixToBaseFrameWrParameter( testTime );
+    for( int i = 0; i < 3; i++ )
+    {
+        currentState = nominalState;
+        currentState( i ) += positionPerturbation;
+        Eigen::Matrix3d upPerturbedRotationMatrix = synchronousRotationModel->getRotationToBaseFrame(
+                    1.0E7 ).toRotationMatrix( );
+
+        currentState = nominalState;
+        currentState( i ) -= positionPerturbation;
+        Eigen::Matrix3d downPerturbedRotationMatrix = synchronousRotationModel->getRotationToBaseFrame(
+                    1.0E7 ).toRotationMatrix( );
+
+        Eigen::Matrix3d relativePartialError =
+                ( ( upPerturbedRotationMatrix - downPerturbedRotationMatrix ) / ( 2.0 * positionPerturbation ) -
+                rotationMatrixPartials.at( i ) ) / rotationMatrixPartials.at( i ).norm( );
+
+        for( int j = 0; j < 3; j++ )
+        {
+            for( int k = 0; k < 3; k++ )
+            {
+                BOOST_CHECK_SMALL( std::fabs( relativePartialError( j, k ) ), 1.0E-8 );
+            }
+        }
+
+        currentState = nominalState;
+        currentState( i + 3 ) += velocityPerturbation;
+        upPerturbedRotationMatrix = synchronousRotationModel->getRotationToBaseFrame(
+                    1.0E7 ).toRotationMatrix( );
+
+        currentState = nominalState;
+        currentState( i + 3 ) -= velocityPerturbation;
+        downPerturbedRotationMatrix = synchronousRotationModel->getRotationToBaseFrame(
+                    1.0E7 ).toRotationMatrix( );
+
+        relativePartialError =
+                        ( ( upPerturbedRotationMatrix - downPerturbedRotationMatrix ) / ( 2.0 * velocityPerturbation ) -
+                        rotationMatrixPartials.at( i + 3 ) ) / rotationMatrixPartials.at( i + 3 ).norm( );
+
+        for( int j = 0; j < 3; j++ )
+        {
+            for( int k = 0; k < 3; k++ )
+            {
+                BOOST_CHECK_SMALL( std::fabs( relativePartialError( j, k ) ), 1.0E-8 );
             }
         }
     }

@@ -1,11 +1,12 @@
 
 #include <cmath>
 
-#include <boost/function.hpp>
+#include <functional>
 
 #include <Eigen/Core>
 
 #include "Tudat/Astrodynamics/Propulsion/costateBasedThrustGuidance.h"
+#include "Tudat/Astrodynamics/BasicAstrodynamics/modifiedEquinoctialElementConversions.h"
 
 namespace tudat
 {
@@ -15,11 +16,11 @@ namespace propulsion
 
 //! Constructor
 MeeCostateBasedThrustGuidance::MeeCostateBasedThrustGuidance(
-        const boost::function< Eigen::Vector6d( ) > thrustingBodyStateFunction,
-        const boost::function< Eigen::Vector6d( ) > centralBodyStateFunction,
-        const boost::function< double( ) > centralBodyGravitationalParameterFunction,
-        boost::function< Eigen::VectorXd( const double ) > costateFunction,
-        const boost::function< Eigen::Vector3d( ) > bodyFixedForceDirection )
+        const std::function< Eigen::Vector6d( ) > thrustingBodyStateFunction,
+        const std::function< Eigen::Vector6d( ) > centralBodyStateFunction,
+        const std::function< double( ) > centralBodyGravitationalParameterFunction,
+        std::function< Eigen::VectorXd( const double ) > costateFunction,
+        const std::function< Eigen::Vector3d( ) > bodyFixedForceDirection )
     : BodyFixedForceDirectionGuidance( bodyFixedForceDirection ),
       thrustingBodyStateFunction_( thrustingBodyStateFunction ),
       centralBodyStateFunction_( centralBodyStateFunction ),
@@ -96,6 +97,21 @@ void MeeCostateBasedThrustGuidance::updateForceDirection( const double time )
                     cos( thrustAngleAlpha ) * cos( thrustAngleBeta ), sin( thrustAngleAlpha ) * cos( thrustAngleBeta ) ,
                     sin( thrustAngleBeta )  ).finished( ).normalized( ) );
         currentTime_ = time;
+
+
+//        // Switching function for the thrust magnitude.
+//        double thrustMagnitudeSwitchingCondition = /*( 1.0 / thrustingBodyMassFunction_( ) ) **/
+//                ( Lbp * cos( thrustAngleBeta ) + Lbh * sin( thrustAngleBeta ) + Lbk * sin( thrustAngleBeta )
+//                + Lbf1 * cos( thrustAngleBeta ) + Lbf2 * cos( thrustAngleBeta ) - Lbf3 * sin( thrustAngleBeta )
+//                - Lbg1 * cos( thrustAngleBeta ) + Lbg2 * cos( thrustAngleBeta ) + Lbg3 * sin( thrustAngleBeta ) );
+//        if ( thrustMagnitudeSwitchingCondition <= 0.0 )
+//        {
+//            std::cout << "INSIDE THRUST DIRECTION FUNCTION, THRUST ON. " << "\n\n";
+//        }
+//        else
+//        {
+//            std::cout << "INSIDE THRUST DIRECTION FUNCTION, THRUST OFF. " << "\n\n";
+//        }
     }
 
 }

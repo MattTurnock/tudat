@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -24,7 +24,7 @@
 
 #include <Eigen/Core>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "Tudat/Astrodynamics/BasicAstrodynamics/timeConversions.h"
 namespace tudat
@@ -161,7 +161,7 @@ private:
 };
 
 //! Pointer to a SolarActivityData structure
-typedef boost::shared_ptr< SolarActivityData > SolarActivityDataPtr;
+typedef std::shared_ptr< SolarActivityData > SolarActivityDataPtr;
 
 //! Data map of SolarActivityData structure Pointers
 typedef std::map< double , SolarActivityDataPtr >  SolarActivityDataMap ;

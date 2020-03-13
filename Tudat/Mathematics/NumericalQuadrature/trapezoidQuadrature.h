@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -17,7 +17,7 @@
 
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <Eigen/Core>
 
@@ -105,7 +105,7 @@ DependentVariableType performExtendedSimpsonsQuadrature(
     }
     else
     {
-        integral = IdentityElement< DependentVariableType >::getAdditionIdentity( );
+        integral = IdentityElement::getAdditionIdentity< DependentVariableType >( );
     }
     return integral;
 }
@@ -185,7 +185,7 @@ private:
 };
 
 //! Typede for trapezoidal quadrature with double (in)dependent variables.
-typedef boost::shared_ptr< TrapezoidNumericalQuadrature< double, double > > TrapezoidNumericalIntegratorPointerd;
+typedef std::shared_ptr< TrapezoidNumericalQuadrature< double, double > > TrapezoidNumericalIntegratorPointerd;
 
 } // namespace numerical_quadrature
 

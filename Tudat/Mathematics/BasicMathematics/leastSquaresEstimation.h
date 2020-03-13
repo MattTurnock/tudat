@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -115,6 +115,8 @@ Eigen::MatrixXd calculateInverseOfUpdatedCovarianceMatrix(
  * \param checkConditionNumber Boolean to denote whether the condition number is checked when estimating (warning is printed
  * when value exceeds maximumAllowedConditionNumber)
  * \param maximumAllowedConditionNumber Maximum value of the condition number of the covariance matrix that is allowed
+ * \param constraintMultiplier Multiplier for estimated parameter that defines linear constraint
+ * \param constraintRightHandside Right-hand side estimation linear constraint
  * \return Pair containing: (first: parameter adjustment, second: inverse covariance)
  */
 std::pair< Eigen::VectorXd, Eigen::MatrixXd > performLeastSquaresAdjustmentFromInformationMatrix(
@@ -123,7 +125,9 @@ std::pair< Eigen::VectorXd, Eigen::MatrixXd > performLeastSquaresAdjustmentFromI
         const Eigen::VectorXd& diagonalOfWeightMatrix,
         const Eigen::MatrixXd& inverseOfAPrioriCovarianceMatrix,
         const bool checkConditionNumber = 1,
-        const double maximumAllowedConditionNumber = 1.0E8 );
+        const double maximumAllowedConditionNumber = 1.0E8,
+        const Eigen::MatrixXd& constraintMultiplier = Eigen::MatrixXd( 0, 0 ),
+        const Eigen::VectorXd& constraintRightHandside = Eigen::VectorXd( 0 ) );
 
 //! Function to perform an iteration of least squares estimation from information matrix, weights and residuals
 /*!
@@ -215,7 +219,7 @@ std::vector< double > getLeastSquaresPolynomialFit(
  *  \return Optimal value of the model parameters that minimize the least squares error between expected and actual observations.
  */
 Eigen::VectorXd nonLinearLeastSquaresFit(
-        const boost::function< std::pair< Eigen::VectorXd, Eigen::MatrixXd >( const Eigen::VectorXd& ) >& observationAndJacobianFunctions,
+        const std::function< std::pair< Eigen::VectorXd, Eigen::MatrixXd >( const Eigen::VectorXd& ) >& observationAndJacobianFunctions,
         const Eigen::VectorXd& initialEstimate, const Eigen::VectorXd& actualObservations, const double initialScaling = 1.0e-6,
         const double convergenceTolerance = 1.0e-8, const unsigned int maximumNumberOfIterations = 25 );
 

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -20,7 +20,7 @@ namespace ground_stations
 //! Function to check whether a target is visible from a ground station, based on minimum allowed elevation angle.
 bool isTargetInView(
         const double time, const Eigen::Vector3d targetRelativeState,
-        const boost::shared_ptr< PointingAnglesCalculator > pointingAngleCalculator, const double minimumElevationAngle )
+        const std::shared_ptr< PointingAnglesCalculator > pointingAngleCalculator, const double minimumElevationAngle )
 {
     double elevationAngle = pointingAngleCalculator->calculateElevationAngle( targetRelativeState, time );
 

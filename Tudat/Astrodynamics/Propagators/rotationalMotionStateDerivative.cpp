@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -22,9 +22,16 @@ Eigen::Vector3d evaluateRotationalEquationsOfMotion(
         const Eigen::Vector3d& angularVelocityVector,
         const Eigen::Matrix3d& inertiaTensorTimeDerivative )
 {
-    return inertiaTensor.inverse( ) * ( totalTorque - angularVelocityVector.cross( inertiaTensor * angularVelocityVector ) -
-                                        inertiaTensorTimeDerivative * angularVelocityVector );
+    return inertiaTensor.inverse( ) * ( totalTorque );
 }
+
+template class RotationalMotionStateDerivative< double, double >;
+
+#if( BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS )
+template class RotationalMotionStateDerivative< long double, double >;
+template class RotationalMotionStateDerivative< double, Time >;
+template class RotationalMotionStateDerivative< long double, Time >;
+#endif
 
 }
 

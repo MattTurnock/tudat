@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -18,7 +18,7 @@ namespace simulation_setup
 {
 
 //! Create a `json` object from a shared pointer to a `RotationModelSettings` object.
-void to_json( nlohmann::json& jsonObject, const boost::shared_ptr< RotationModelSettings >& rotationModelSettings )
+void to_json( nlohmann::json& jsonObject, const std::shared_ptr< RotationModelSettings >& rotationModelSettings )
 {
     if ( ! rotationModelSettings )
     {
@@ -36,23 +36,42 @@ void to_json( nlohmann::json& jsonObject, const boost::shared_ptr< RotationModel
     {
     case simple_rotation_model:
     {
-        boost::shared_ptr< SimpleRotationModelSettings > simpleRotationModelSettings =
-                boost::dynamic_pointer_cast< SimpleRotationModelSettings >( rotationModelSettings );
-        assertNonNullPointer( simpleRotationModelSettings );
+        std::shared_ptr< SimpleRotationModelSettings > simpleRotationModelSettings =
+                std::dynamic_pointer_cast< SimpleRotationModelSettings >( rotationModelSettings );
+        assertNonnullptrPointer( simpleRotationModelSettings );
         jsonObject[ K::initialOrientation ] = simpleRotationModelSettings->getInitialOrientation( );
         jsonObject[ K::initialTime ] = simpleRotationModelSettings->getInitialTime( );
         jsonObject[ K::rotationRate ] = simpleRotationModelSettings->getRotationRate( );
         return;
     }
+    case  synchronous_rotation_model:
+    {
+        std::shared_ptr< SynchronousRotationModelSettings > synchronousRotationModelSettings =
+                std::dynamic_pointer_cast< SynchronousRotationModelSettings >( rotationModelSettings );
+        assertNonnullptrPointer( synchronousRotationModelSettings );
+
+        jsonObject[ K::centralBodyName ] = synchronousRotationModelSettings->getCentralBodyName( );
+        return;
+    }
     case spice_rotation_model:
         return;
+    case gcrs_to_itrs_rotation_model:
+    {
+        std::cerr<<"Warning when writing GCRS to ITRS rotation model to JSON, only precession-nutation theory and base frame are saved, rest is kept at default values"<<std::endl;
+
+        std::shared_ptr< GcrsToItrsRotationModelSettings > simpleRotationModelSettings =
+                std::dynamic_pointer_cast< GcrsToItrsRotationModelSettings >( rotationModelSettings );
+        assertNonnullptrPointer( simpleRotationModelSettings );
+        jsonObject[ K::precessionNutationTheory ] = simpleRotationModelSettings->getNutationTheory( );
+        return;
+    }
     default:
         handleUnimplementedEnumValue( rotationModelType, rotationModelTypes, unsupportedRotationModelTypes );
     }
 }
 
 //! Create a shared pointer to a `RotationModelSettings` object from a `json` object.
-void from_json( const nlohmann::json& jsonObject, boost::shared_ptr< RotationModelSettings >& rotationModelSettings )
+void from_json( const nlohmann::json& jsonObject, std::shared_ptr< RotationModelSettings >& rotationModelSettings )
 {
     using namespace json_interface;
     using K = Keys::Body::RotationModel;
@@ -60,7 +79,16 @@ void from_json( const nlohmann::json& jsonObject, boost::shared_ptr< RotationMod
     // Base class settings
     const RotationModelType rotationModelType = getValue< RotationModelType >( jsonObject, K::type );
     const std::string originalFrame = getValue< std::string >( jsonObject, K::originalFrame );
-    const std::string targetFrame = getValue< std::string >( jsonObject, K::targetFrame );
+
+    std::string targetFrame = "";
+    if( rotationModelType != gcrs_to_itrs_rotation_model )
+    {
+        targetFrame = getValue< std::string >( jsonObject, K::targetFrame );
+    }
+    else
+    {
+       targetFrame = "GCRS";
+    }
 
     switch ( rotationModelType ) {
     case simple_rotation_model:
@@ -80,7 +108,7 @@ void from_json( const nlohmann::json& jsonObject, boost::shared_ptr< RotationMod
             jsonInitialOrientation[ K::initialTime ] = initialTime;
         }
 
-        rotationModelSettings = boost::make_shared< SimpleRotationModelSettings >(
+        rotationModelSettings = std::make_shared< SimpleRotationModelSettings >(
                     originalFrame,
                     targetFrame,
                     getAs< Eigen::Quaterniond >( jsonInitialOrientation ),
@@ -88,10 +116,26 @@ void from_json( const nlohmann::json& jsonObject, boost::shared_ptr< RotationMod
                     getValue< double >( jsonObject, K::rotationRate ) );
         return;
     }
+    case  synchronous_rotation_model:
+    {
+        const std::string centralBody = getValue< std::string >( jsonObject, K::centralBodyName );
+        rotationModelSettings = std::make_shared< SynchronousRotationModelSettings >(
+                     centralBody, originalFrame, targetFrame );
+        return;
+    }
+
     case spice_rotation_model:
     {
-        rotationModelSettings = boost::make_shared< RotationModelSettings >(
+        rotationModelSettings = std::make_shared< RotationModelSettings >(
                     rotationModelType, originalFrame, targetFrame );
+        return;
+    }
+    case gcrs_to_itrs_rotation_model:
+    {
+        rotationModelSettings = std::make_shared< GcrsToItrsRotationModelSettings >(
+                     getValue< basic_astrodynamics::IAUConventions >(
+                        jsonObject, K::precessionNutationTheory, basic_astrodynamics::iau_2006 ),
+                    originalFrame );
         return;
     }
     default:

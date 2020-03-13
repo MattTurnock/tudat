@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -43,8 +43,8 @@ BOOST_AUTO_TEST_CASE( test_json_rotationModel_simple )
     loadStandardSpiceKernels( );
 
     // Create RotationModelSettings from JSON file
-    const boost::shared_ptr< RotationModelSettings > fromFileSettings =
-            parseJSONFile< boost::shared_ptr< RotationModelSettings > >( INPUT( "simple" ) );
+    const std::shared_ptr< RotationModelSettings > fromFileSettings =
+            parseJSONFile< std::shared_ptr< RotationModelSettings > >( INPUT( "simple" ) );
 
     // Create RotationModelSettings manually
     const std::string originalFrame = "ECLIPJ2000";
@@ -53,8 +53,8 @@ BOOST_AUTO_TEST_CASE( test_json_rotationModel_simple )
     const Eigen::Quaterniond initialOrientation =
             spice_interface::computeRotationQuaternionBetweenFrames( originalFrame, targetFrame, initialTime );
     const double rotationRate = 2.0e-5;
-    const boost::shared_ptr< RotationModelSettings > manualSettings =
-            boost::make_shared< SimpleRotationModelSettings >( originalFrame,
+    const std::shared_ptr< RotationModelSettings > manualSettings =
+            std::make_shared< SimpleRotationModelSettings >( originalFrame,
                                                                targetFrame,
                                                                initialOrientation,
                                                                initialTime,
@@ -71,14 +71,14 @@ BOOST_AUTO_TEST_CASE( test_json_rotationModel_spice )
     using namespace json_interface;
 
     // Create RotationModelSettings from JSON file
-    const boost::shared_ptr< RotationModelSettings > fromFileSettings =
-            parseJSONFile< boost::shared_ptr< RotationModelSettings > >( INPUT( "spice" ) );
+    const std::shared_ptr< RotationModelSettings > fromFileSettings =
+            parseJSONFile< std::shared_ptr< RotationModelSettings > >( INPUT( "spice" ) );
 
     // Create RotationModelSettings manually
     const std::string originalFrame = "foo";
     const std::string targetFrame = "oof";
-    const boost::shared_ptr< RotationModelSettings > manualSettings =
-            boost::make_shared< RotationModelSettings >( spice_rotation_model,
+    const std::shared_ptr< RotationModelSettings > manualSettings =
+            std::make_shared< RotationModelSettings >( spice_rotation_model,
                                                          originalFrame,
                                                          targetFrame );
 
@@ -86,6 +86,46 @@ BOOST_AUTO_TEST_CASE( test_json_rotationModel_spice )
     BOOST_CHECK_EQUAL_JSON( fromFileSettings, manualSettings );
 }
 
+// Test 3: Spice GCRS<->ITRS rotation model
+BOOST_AUTO_TEST_CASE( test_json_rotationModel_gcrs_itrs )
+{
+    using namespace simulation_setup;
+    using namespace json_interface;
+
+    // Create RotationModelSettings from JSON file
+    const std::shared_ptr< RotationModelSettings > fromFileSettings =
+            parseJSONFile< std::shared_ptr< RotationModelSettings > >( INPUT( "gcrsItrs" ) );
+
+    // Create RotationModelSettings manually
+    const std::string originalFrame = "J2000";
+    const basic_astrodynamics::IAUConventions iauConvention = basic_astrodynamics::iau_2000_b;
+
+    const std::shared_ptr< RotationModelSettings > manualSettings =
+            std::make_shared< GcrsToItrsRotationModelSettings >(
+                iauConvention, originalFrame );
+
+    // Compare
+    BOOST_CHECK_EQUAL_JSON( fromFileSettings, manualSettings );
+}
+
+// Test 3: Synchronous rotation model
+BOOST_AUTO_TEST_CASE( test_json_rotationModel_synchronous )
+{
+    using namespace simulation_setup;
+    using namespace json_interface;
+
+    // Create RotationModelSettings from JSON file
+    const std::shared_ptr< RotationModelSettings > fromFileSettings =
+            parseJSONFile< std::shared_ptr< RotationModelSettings > >( INPUT( "synchronous" ) );
+
+    // Create RotationModelSettings manually
+    const std::shared_ptr< RotationModelSettings > manualSettings =
+            std::make_shared< SynchronousRotationModelSettings >(
+                "Sun", "ECLIPJ2000", "IAU_Earth" );
+
+    // Compare
+    BOOST_CHECK_EQUAL_JSON( fromFileSettings, manualSettings );
+}
 BOOST_AUTO_TEST_SUITE_END( )
 
 } // namespace unit_tests

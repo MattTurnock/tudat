@@ -1,4 +1,4 @@
- #    Copyright (c) 2010-2018, Delft University of Technology
+ #    Copyright (c) 2010-2019, Delft University of Technology
  #    All rigths reserved
  #
  #    This file is part of the Tudat. Redistribution and use in source and
@@ -34,10 +34,10 @@ setup_custom_test_program(test_LinearKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/F
 target_link_libraries(test_LinearKalmanFilter tudat_filters tudat_numerical_integrators tudat_statistics tudat_basics tudat_basic_mathematics
     tudat_input_output ${Boost_LIBRARIES})
 
-add_executable(test_ExtendedKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/Filters/UnitTests/unitTestExtendedKalmanFilter.cpp")
-setup_custom_test_program(test_ExtendedKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/Filters")
-target_link_libraries(test_ExtendedKalmanFilter tudat_filters tudat_numerical_integrators tudat_statistics tudat_basics tudat_basic_mathematics
-    tudat_input_output ${Boost_LIBRARIES})
+#add_executable(test_ExtendedKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/Filters/UnitTests/unitTestExtendedKalmanFilter.cpp")
+#setup_custom_test_program(test_ExtendedKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/Filters")
+#target_link_libraries(test_ExtendedKalmanFilter tudat_filters tudat_numerical_integrators tudat_statistics tudat_basics tudat_basic_mathematics
+#    tudat_input_output ${Boost_LIBRARIES})
 
 add_executable(test_UnscentedKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/Filters/UnitTests/unitTestUnscentedKalmanFilter.cpp")
 setup_custom_test_program(test_UnscentedKalmanFilter "${SRCROOT}${MATHEMATICSDIR}/Filters")

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -14,8 +14,8 @@
 
 #include <Eigen/Core>
 
-#include <boost/shared_ptr.hpp>
-#include <boost/function.hpp>
+#include <memory>
+#include <functional>
 
 namespace tudat
 {
@@ -65,7 +65,7 @@ public:
      * order).
      */
     CustomWindModel(
-            const boost::function< Eigen::Vector3d( const double, const double, const double, const double ) > windFunction ):
+            const std::function< Eigen::Vector3d( const double, const double, const double, const double ) > windFunction ):
     windFunction_( windFunction ){ }
 
     //! Destructor
@@ -92,7 +92,7 @@ public:
 private:
 
     //! Function that returns wind vector as a function of altitude, longitude, latitude and time (in that order).
-    boost::function< Eigen::Vector3d( const double, const double, const double, const double ) > windFunction_;
+    std::function< Eigen::Vector3d( const double, const double, const double, const double ) > windFunction_;
 
 };
 

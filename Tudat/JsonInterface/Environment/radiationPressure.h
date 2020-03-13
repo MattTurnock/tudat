@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -24,7 +24,7 @@ namespace simulation_setup
 //! Map of `RadiationPressureType`s string representations.
 static std::map< RadiationPressureType, std::string > radiationPressureTypes =
 {
-    { cannon_ball, "cannonBall" }
+    { cannon_ball_radiation_pressure_interface, "cannonBall" }
 };
 
 //! `RadiationPressureType`s not supported by `json_interface`.
@@ -44,11 +44,11 @@ inline void from_json( const nlohmann::json& jsonObject, RadiationPressureType& 
 
 //! Create a `json` object from a shared pointer to a `RadiationPressureInterfaceSettings` object.
 void to_json( nlohmann::json& jsonObject,
-              const boost::shared_ptr< RadiationPressureInterfaceSettings >& radiationPressureInterfaceSettings );
+              const std::shared_ptr< RadiationPressureInterfaceSettings >& radiationPressureInterfaceSettings );
 
 //! Create a `json` object from a shared pointer to a `RadiationPressureInterfaceSettings` object.
 void from_json( const nlohmann::json& jsonObject,
-                boost::shared_ptr< RadiationPressureInterfaceSettings >& radiationPressureInterfaceSettings );
+                std::shared_ptr< RadiationPressureInterfaceSettings >& radiationPressureInterfaceSettings );
 
 } // namespace simulation_setup
 

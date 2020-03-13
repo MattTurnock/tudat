@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -11,7 +11,7 @@
 #include <boost/bind.hpp>
 
 #include "Tudat/Astrodynamics/OrbitDetermination/LightTimeCorrectionPartials/lightTimeCorrectionPartial.h"
-#include "Tudat/Astrodynamics/OrbitDetermination/LightTimeCorrectionPartials/firstOrderRelativisticLightTimeCorrectionPartial.h"
+#include "Tudat/Astrodynamics/OrbitDetermination/LightTimeCorrectionPartials/firstOrderRelativisticPartial.h"
 
 namespace tudat
 {
@@ -21,14 +21,14 @@ namespace observation_partials
 
 //! Function to get the function returning the light-time correction partial for given correction partial and parameter.
 
-std::pair< boost::function< LightTimeCorrectionPartial::SingleOneWayRangePartialReturnType(
+std::pair< std::function< LightTimeCorrectionPartial::SingleOneWayRangePartialReturnType(
         const std::vector< Eigen::Vector6d >&, const std::vector< double >& ) >, bool >
 getLightTimeParameterPartialFunction(
         const estimatable_parameters::EstimatebleParameterIdentifier parameterId,
-        const boost::shared_ptr< LightTimeCorrectionPartial > lightTimeCorrectionPartial )
+        const std::shared_ptr< LightTimeCorrectionPartial > lightTimeCorrectionPartial )
 {
     // Declare return type, set second part to 0 (no dependency found).
-    std::pair< boost::function< LightTimeCorrectionPartial::SingleOneWayRangePartialReturnType(
+    std::pair< std::function< LightTimeCorrectionPartial::SingleOneWayRangePartialReturnType(
                 const std::vector< Eigen::Vector6d >&, const std::vector< double >& ) >, bool > partialFunction;
     partialFunction.second = 0;
 
@@ -39,9 +39,9 @@ getLightTimeParameterPartialFunction(
     case observation_models::first_order_relativistic:
     {
         // Check consistency of input.
-        boost::shared_ptr< FirstOrderRelativisticLightTimeCorrectionPartial > currentLightTimeCorrectorPartial =
-                boost::dynamic_pointer_cast< FirstOrderRelativisticLightTimeCorrectionPartial >( lightTimeCorrectionPartial );
-        if( currentLightTimeCorrectorPartial == NULL )
+        std::shared_ptr< FirstOrderRelativisticLightTimeCorrectionPartial > currentLightTimeCorrectorPartial =
+                std::dynamic_pointer_cast< FirstOrderRelativisticLightTimeCorrectionPartial >( lightTimeCorrectionPartial );
+        if( currentLightTimeCorrectorPartial == nullptr )
         {
             std::string errorMessage = "Error when getting light time correction partial function, type " +
                     std::to_string( lightTimeCorrectionPartial->getCorrectionType( ) ) +
@@ -61,15 +61,15 @@ getLightTimeParameterPartialFunction(
             {
                 int bodyIndex = std::distance( perturbingBodies.begin( ),  findIterator );
                 partialFunction = std::make_pair(
-                            boost::bind( &FirstOrderRelativisticLightTimeCorrectionPartial::wrtBodyGravitationalParameter,
-                                         currentLightTimeCorrectorPartial, _1, _2, bodyIndex ), 1 );
+                            std::bind( &FirstOrderRelativisticLightTimeCorrectionPartial::wrtBodyGravitationalParameter,
+                                         currentLightTimeCorrectorPartial, std::placeholders::_1, std::placeholders::_2, bodyIndex ), 1 );
             }
         }
         else if( parameterId.first == estimatable_parameters::ppn_parameter_gamma )
         {
             partialFunction = std::make_pair(
-                        boost::bind( &FirstOrderRelativisticLightTimeCorrectionPartial::wrtPpnParameterGamma,
-                                     currentLightTimeCorrectorPartial, _1, _2 ), 1 );
+                        std::bind( &FirstOrderRelativisticLightTimeCorrectionPartial::wrtPpnParameterGamma,
+                                     currentLightTimeCorrectorPartial, std::placeholders::_1, std::placeholders::_2 ), 1 );
         }
         break;
     }

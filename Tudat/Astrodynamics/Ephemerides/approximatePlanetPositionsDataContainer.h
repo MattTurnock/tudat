@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -19,7 +19,7 @@
 #include <iostream>
 #include <string>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 namespace tudat
 {
@@ -230,7 +230,7 @@ private:
 };
 
 //! Typedef for shared-pointer to ApproximatePlanetPositionsDataContainer object.
-typedef boost::shared_ptr< ApproximatePlanetPositionsDataContainer >
+typedef std::shared_ptr< ApproximatePlanetPositionsDataContainer >
 ApproximatePlanetPositionsDataContainerPointer;
 
 } // namespace ephemerides

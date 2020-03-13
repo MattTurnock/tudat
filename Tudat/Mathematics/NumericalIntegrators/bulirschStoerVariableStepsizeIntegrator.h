@@ -1,21 +1,11 @@
-/*    Copyright (c) 2010-2012 Delft University of Technology.
+/*    Copyright (c) 2010-2019, Delft University of Technology
+ *    All rigths reserved
  *
- *    This software is protected by national and international copyright.
- *    Any unauthorized use, reproduction or modification is unlawful and
- *    will be prosecuted. Commercial and non-private application of the
- *    software in any form is strictly prohibited unless otherwise granted
- *    by the authors.
- *
- *    The code is provided without any warranty; without even the implied
- *    warranty of merchantibility or fitness for a particular purpose.
- *
- *    Changelog
- *      YYMMDD    Author            Comment
- *      120316    K. Kumar          File created.
- *
- *    References
- *      Press W.H., et al. Numerical Recipes in C++: The Art of
- *          Scientific Computing. Cambridge University Press, February 2002.
+ *    This file is part of the Tudat. Redistribution and use in source and
+ *    binary forms, with or without modification, are permitted exclusively
+ *    under the terms of the Modified BSD license. You should have received
+ *    a copy of the license with this file. If not, please or visit:
+ *    http://tudat.tudelft.nl/LICENSE.
  *
  */
 
@@ -189,6 +179,8 @@ public:
         }
     }
 
+    ~BulirschStoerVariableStepSizeIntegrator( ){ }
+
     //! Get step size of the next step.
     /*!
      * Returns the step size of the next step.
@@ -300,6 +292,7 @@ public:
                 }
             }
         }
+
         if( !stepSuccessful )
         {
             if( safetyFactorForNextStepSize_ * errorScaleTerm < minimumFactorDecreaseForNextStepSize_ )
@@ -323,15 +316,17 @@ public:
             if( errorScaleTerm > maximumFactorIncreaseForNextStepSize_ )
             {
                 this->stepSize_ = stepSize * maximumFactorIncreaseForNextStepSize_;
-                if(  std::fabs( this->stepSize_ ) >=  std::fabs( maximumStepSize_ ) )
-                {
-                   this->stepSize_ = stepSize / ( std::fabs( stepSize ) ) * maximumStepSize_ ;
-                }
             }
             else
             {
                 this->stepSize_ = stepSize * errorScaleTerm;
             }
+
+            if(  std::fabs( this->stepSize_ ) >=  std::fabs( maximumStepSize_ ) )
+            {
+               this->stepSize_ = stepSize / ( std::fabs( stepSize ) ) * maximumStepSize_ ;
+            }
+
         }
 
 
@@ -379,6 +374,15 @@ public:
     StateType getPreviousState( )
     {
         return lastState_;
+    }
+
+    void modifyCurrentState( const StateType& newState, const bool allowRollback = false )
+    {
+        currentState_ = newState;
+        if ( !allowRollback )
+        {
+            this->lastIndependentVariable_ = currentIndependentVariable_;
+        }
     }
 
 private:
@@ -497,6 +501,11 @@ private:
     std::vector< double > subSteps_;
 
 };
+
+extern template class BulirschStoerVariableStepSizeIntegrator < double, Eigen::VectorXd, Eigen::VectorXd >;
+extern template class BulirschStoerVariableStepSizeIntegrator < double, Eigen::Vector6d, Eigen::Vector6d >;
+extern template class BulirschStoerVariableStepSizeIntegrator < double, Eigen::MatrixXd, Eigen::MatrixXd >;
+
 
 //! Typedef of variable-step size Bulirsch-Stoer integrator (state/state derivative = VectorXd,
 //! independent variable = double).

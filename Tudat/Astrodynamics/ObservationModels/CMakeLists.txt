@@ -1,4 +1,4 @@
- #    Copyright (c) 2010-2018, Delft University of Technology
+ #    Copyright (c) 2010-2019, Delft University of Technology
  #    All rigths reserved
  #
  #    This file is part of the Tudat. Redistribution and use in source and
@@ -6,7 +6,6 @@
  #    under the terms of the Modified BSD license. You should have received
  #    a copy of the license with this file. If not, please or visit:
  #    http://tudat.tudelft.nl/LICENSE.
-
 
 set(OBSERVABLECORRECTIONSDIR "${OBSERVATIONMODELSDIR}/ObservableCorrections")
 
@@ -17,7 +16,11 @@ set(OBSERVATION_MODELS_SOURCES
   "${SRCROOT}${OBSERVATIONMODELSDIR}/observableTypes.cpp"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/linkTypeDefs.cpp"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/observationViabilityCalculator.cpp"
-  "${SRCROOT}${OBSERVABLECORRECTIONSDIR}/firstOrderRelativisticLightTimeCorrection.cpp"  
+  "${SRCROOT}${OBSERVATIONMODELSDIR}/observationManager.cpp"
+  "${SRCROOT}${OBSERVATIONMODELSDIR}/observationSimulator.cpp"
+  "${SRCROOT}${OBSERVATIONMODELSDIR}/observationModel.cpp"
+  "${SRCROOT}${OBSERVATIONMODELSDIR}/simulateObservations.cpp"
+  "${SRCROOT}${OBSERVABLECORRECTIONSDIR}/firstOrderRelativisticCorrection.cpp"
 )
 
 # Set the header files.
@@ -36,11 +39,13 @@ set(OBSERVATION_MODELS_HEADERS
   "${SRCROOT}${OBSERVATIONMODELSDIR}/oneWayDifferencedRangeRateObservationModel.h"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/simulateObservations.h"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/positionObservationModel.h"
+  "${SRCROOT}${OBSERVATIONMODELSDIR}/velocityObservationModel.h"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/twoWayDopplerObservationModel.h"
+  "${SRCROOT}${OBSERVATIONMODELSDIR}/eulerAngleObservationModel.h"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/UnitTests/testLightTimeCorrections.h"
   "${SRCROOT}${OBSERVATIONMODELSDIR}/observationViabilityCalculator.h"
   "${SRCROOT}${OBSERVABLECORRECTIONSDIR}/lightTimeCorrection.h"
-  "${SRCROOT}${OBSERVABLECORRECTIONSDIR}/firstOrderRelativisticLightTimeCorrection.h"
+  "${SRCROOT}${OBSERVABLECORRECTIONSDIR}/firstOrderRelativisticCorrection.h"
 )
 
 
@@ -73,6 +78,14 @@ if(USE_CSPICE)
     add_executable(test_PositionObservationModel "${SRCROOT}${OBSERVATIONMODELSDIR}/UnitTests/unitTestPositionObservationModel.cpp")
     setup_custom_test_program(test_PositionObservationModel "${SRCROOT}${OBSERVATIONMODELSDIR}")
     target_link_libraries(test_PositionObservationModel ${TUDAT_ESTIMATION_LIBRARIES} ${Boost_LIBRARIES})
+
+    add_executable(test_EulerAngleObservationModel "${SRCROOT}${OBSERVATIONMODELSDIR}/UnitTests/unitTestEulerAngleObservationModel.cpp")
+    setup_custom_test_program(test_EulerAngleObservationModel "${SRCROOT}${OBSERVATIONMODELSDIR}")
+    target_link_libraries(test_EulerAngleObservationModel ${TUDAT_ESTIMATION_LIBRARIES} ${Boost_LIBRARIES})
+
+    add_executable(test_VelocityObservationModel "${SRCROOT}${OBSERVATIONMODELSDIR}/UnitTests/unitTestVelocityObservationModel.cpp")
+    setup_custom_test_program(test_VelocityObservationModel "${SRCROOT}${OBSERVATIONMODELSDIR}")
+    target_link_libraries(test_VelocityObservationModel ${TUDAT_ESTIMATION_LIBRARIES} ${Boost_LIBRARIES})
 
     add_executable(test_ObservationNoiseSimulation "${SRCROOT}${OBSERVATIONMODELSDIR}/UnitTests/unitTestSimulatedObservationNoise.cpp")
     setup_custom_test_program(test_ObservationNoiseSimulation "${SRCROOT}${OBSERVATIONMODELSDIR}")

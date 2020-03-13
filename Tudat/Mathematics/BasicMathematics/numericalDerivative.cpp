@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -63,7 +63,7 @@ const std::map< int, double >& getCentralDifferenceCoefficients( CentralDifferen
     return coefficients[ order ];
 }
 
-Eigen::MatrixXd computeCentralDifference( const Eigen::VectorXd& input, const boost::function<
+Eigen::MatrixXd computeCentralDifference( const Eigen::VectorXd& input, const std::function<
                                           Eigen::VectorXd( const Eigen::VectorXd& ) >& function,
                                           double minimumStep, double relativeStepSize,
                                           CentralDifferenceOrders order )

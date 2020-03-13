@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -17,7 +17,7 @@ namespace input_output
 {
 
 //! Transform input string.
-boost::shared_ptr< std::string > LinearFieldTransform::transform( const std::string& input )
+std::shared_ptr< std::string > LinearFieldTransform::transform( const std::string& input )
 {
     // Transform string to double.
     const double number = std::stod( input );
@@ -26,7 +26,7 @@ boost::shared_ptr< std::string > LinearFieldTransform::transform( const std::str
     const double result = slope * number + intercept;
 
     // Return pointer to transformed value, in string format.
-    return boost::shared_ptr< std::string >( new std::string( std::to_string( result ) ) );
+    return std::shared_ptr< std::string >( new std::string( std::to_string( result ) ) );
 }
 
 } // namespace input_output

@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -66,12 +66,12 @@ BOOST_AUTO_TEST_CASE( testTabulatedRotationalEphemeris )
     }
 
     // Create interpolator for rotation
-    boost::shared_ptr< interpolators::OneDimensionalInterpolator< double, Eigen::Matrix< double, 7, 1 > > > rotationInterpolator =
-            boost::make_shared< interpolators::LagrangeInterpolator< double, Eigen::Matrix< double, 7, 1 > > >( rotationMap, 6 );
+    std::shared_ptr< interpolators::OneDimensionalInterpolator< double, Eigen::Matrix< double, 7, 1 > > > rotationInterpolator =
+            std::make_shared< interpolators::LagrangeInterpolator< double, Eigen::Matrix< double, 7, 1 > > >( rotationMap, 6 );
 
     // Create tabulated rotational model
-    boost::shared_ptr< TabulatedRotationalEphemeris< double, double > > tabulatedEphemeris =
-            boost::make_shared< TabulatedRotationalEphemeris<  double, double > >( rotationInterpolator );
+    std::shared_ptr< TabulatedRotationalEphemeris< double, double > > tabulatedEphemeris =
+            std::make_shared< TabulatedRotationalEphemeris<  double, double > >( rotationInterpolator );
 
     //  Declare variables for rotation properties retrieved from class/spice
     Eigen::Matrix3d currentRotationMatrixToTargetFrame, currentRotationMatrixToBaseFrame;

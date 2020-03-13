@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -88,10 +88,10 @@ inline void from_json( const nlohmann::json& jsonObject, AerodynamicCoefficientT
 
 //! Create a `json` object from a shared pointer to a `AerodynamicCoefficientSettings` object.
 void to_json( nlohmann::json& jsonObject,
-              const boost::shared_ptr< AerodynamicCoefficientSettings >& aerodynamicSettings );
+              const std::shared_ptr< AerodynamicCoefficientSettings >& aerodynamicSettings );
 
 //! Create a `json` object from a shared pointer to a `AerodynamicCoefficientSettings` object.
-void from_json(const nlohmann::json& jsonObject, boost::shared_ptr< AerodynamicCoefficientSettings >& aerodynamicSettings );
+void from_json(const nlohmann::json& jsonObject, std::shared_ptr< AerodynamicCoefficientSettings >& aerodynamicSettings );
 
 } // namespace simulation_setup
 

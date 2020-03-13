@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -23,7 +23,7 @@ TabulatedGravityFieldVariations::TabulatedGravityFieldVariations(
         const std::map< double, Eigen::MatrixXd >& cosineCoefficientCorrections,
         const std::map< double, Eigen::MatrixXd >& sineCoefficientCorrections,
         const int minimumDegree, const int minimumOrder,
-        const boost::shared_ptr< interpolators::InterpolatorSettings >interpolatorType ):
+        const std::shared_ptr< interpolators::InterpolatorSettings >interpolatorType ):
     GravityFieldVariations( minimumDegree, minimumOrder,
                             minimumDegree + cosineCoefficientCorrections.begin( )->second.rows( ) - 1,
                             minimumOrder + cosineCoefficientCorrections.begin( )->second.cols( ) - 1 ),

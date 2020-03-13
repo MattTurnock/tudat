@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -59,11 +59,11 @@ void testAerodynamicAngleCalculation(
 {
     // Create angle calculator
     AerodynamicAngleCalculator aerodynamicAngleCalculator(
-                boost::lambda::constant( testState ),
-                boost::lambda::constant( Eigen::Quaterniond( Eigen::Matrix3d::Identity( ) ) ), "", 1,
-                boost::lambda::constant( angleOfAttack ),
-                boost::lambda::constant( angleOfSideslip),
-                boost::lambda::constant( bankAngle ) );
+                [ & ]( ){ return testState; },
+                [ & ]( ){ return Eigen::Quaterniond( Eigen::Matrix3d::Identity( ) ); }, "", 1,
+                [ & ]( ){ return angleOfAttack; },
+                [ & ]( ){ return angleOfSideslip; },
+                [ & ]( ){ return bankAngle; } );
 
     // Update angle calculator.
     aerodynamicAngleCalculator.update( 0.0, true );

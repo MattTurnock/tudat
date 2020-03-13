@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -41,8 +41,10 @@ Eigen::Quaterniond convertVectorToQuaternionFormat( const Eigen::Vector4d& vecto
     quaternion.x( ) = vector( 1 );
     quaternion.y( ) = vector( 2 );
     quaternion.z( ) = vector( 3 );
+
     return quaternion;
 }
+
 
 //! Function to take the product of two quaternions.
 Eigen::Vector4d quaternionProduct( const Eigen::Vector4d& firstQuaternion, const Eigen::Vector4d& secondQuaternion )
@@ -128,14 +130,14 @@ double getVectorNorm( const Eigen::Vector3d& vector )
 }
 
 Eigen::Vector3d evaluateSecondBlockInStateVector(
-        const boost::function< Eigen::Vector6d( const double ) > stateFunction,
+        const std::function< Eigen::Vector6d( const double ) > stateFunction,
         const double time )
 {
     return stateFunction( time ).segment( 3, 3 );
 }
 
 //! Computes the norm of a 3d vector from a vector-returning function.
-double getVectorNormFromFunction( const boost::function< Eigen::Vector3d( ) > vectorFunction )
+double getVectorNormFromFunction( const std::function< Eigen::Vector3d( ) > vectorFunction )
 {
     return getVectorNorm( vectorFunction( ) );
 }
@@ -162,6 +164,33 @@ double getVectorEntryRootMeanSquare( const Eigen::VectorXd& inputVector )
     vectorRms = std::sqrt( vectorRms / inputVector.rows( ) );
 
     return vectorRms;
+}
+
+//! Function to compute the partial derivative of a rotation matrix w.r.t. its associated quaterion elements
+void computePartialDerivativeOfRotationMatrixWrtQuaternion(
+        const Eigen::Vector4d quaternionVector,
+        std::vector< Eigen::Matrix3d >& partialDerivatives )
+{
+    partialDerivatives[ 0 ]<< quaternionVector( 0 ), -quaternionVector( 3 ), quaternionVector( 2 ),
+            quaternionVector( 3 ), quaternionVector( 0 ), -quaternionVector( 1 ),
+            -quaternionVector( 2 ), quaternionVector( 1 ), quaternionVector( 0 );
+     partialDerivatives[ 0 ] *= 2.0;
+
+    partialDerivatives[ 1 ]<< quaternionVector( 1 ), quaternionVector( 2 ), quaternionVector( 3 ),
+            quaternionVector( 2 ), -quaternionVector( 1 ), -quaternionVector( 0 ),
+            quaternionVector( 3 ), quaternionVector( 0 ), -quaternionVector( 1 );
+    partialDerivatives[ 1 ] *= 2.0;
+
+    partialDerivatives[ 2 ]<< -quaternionVector( 2 ), quaternionVector( 1 ), quaternionVector( 0 ),
+            quaternionVector( 1 ), quaternionVector( 2 ), quaternionVector( 3 ),
+            -quaternionVector( 0 ), quaternionVector( 3 ), -quaternionVector( 2 );
+    partialDerivatives[ 2 ] *= 2.0;
+
+    partialDerivatives[ 3 ]<< -quaternionVector( 3 ), -quaternionVector( 0 ), quaternionVector( 1 ),
+            quaternionVector( 0 ), -quaternionVector( 3 ), quaternionVector( 2 ),
+            quaternionVector( 1 ), quaternionVector( 2 ), quaternionVector( 3 );
+    partialDerivatives[ 3 ] *= 2.0;
+
 }
 
 

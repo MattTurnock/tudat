@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -22,6 +22,7 @@
 
 namespace tudat
 {
+
 namespace transfer_trajectories
 {
 
@@ -37,6 +38,7 @@ namespace transfer_trajectories
 class DepartureLeg : public SpaceLeg
 {
 public:
+
     //! Constructor with immediate definition of parameters.
     /*!
      *  Constructor, sets objects and functions from which relevant environment and state variables
@@ -49,6 +51,7 @@ public:
      *  \param departureBodyGravitationalParameter gravitational parameter of the departure body.
      *  \param semiMajorAxis semi-major axis of the orbit after the capture is performed.
      *  \param eccentricity eccentricity of the orbit after the capture is performed.
+     *  \param includeDepartureDeltaV Boolean denoting whether to include the Delta V of departure.
      */
     DepartureLeg( const Eigen::Vector3d& departureBodyPosition,
                   const Eigen::Vector3d& arrivalBodyPosition,
@@ -57,39 +60,61 @@ public:
                   const double centralBodyGravitationalParameter,
                   const double departureBodyGravitationalParameter,
                   const double semiMajorAxis,
-                  const double eccentricity):
-                SpaceLeg( departureBodyPosition,
-                          arrivalBodyPosition,
-                          timeOfFlight,
-                          departureBodyVelocity,
-                          centralBodyGravitationalParameter),
-                departureBodyGravitationalParameter_( departureBodyGravitationalParameter ),
-                semiMajorAxis_( semiMajorAxis ),
-                eccentricity_( eccentricity ){ }
+                  const double eccentricity,
+                  const bool includeDepartureDeltaV = true ):
+        SpaceLeg( departureBodyPosition,
+                  arrivalBodyPosition,
+                  timeOfFlight,
+                  departureBodyVelocity,
+                  centralBodyGravitationalParameter),
+        departureBodyGravitationalParameter_( departureBodyGravitationalParameter ),
+        semiMajorAxis_( semiMajorAxis ),
+        eccentricity_( eccentricity ),
+        includeDepartureDeltaV_( includeDepartureDeltaV ){ }
+
+    //! Function to retrieve the value of the escape Delta V.
+    /*!
+     *  Function to retrieve the value of the escape Delta V.
+     *  \param escapeDeltaV Double denoting the value of the escape Delta V.
+     *  \return Double denoting the value of the escape Delta V (returned by reference ).
+     */
+    void getEscapeDeltaV( double& escapeDeltaV )
+    {
+        escapeDeltaV = escapeDeltaV_;
+    }
+
 protected:
 
     //! The departure body gravitational parameter.
     /*!
-     * The gravitational parameter of the departure body in the leg.
+     *  The gravitational parameter of the departure body in the leg.
      */
     double departureBodyGravitationalParameter_;
 
-    //! The semi major axis of the departure orbit.
+    //! The semi-major axis of the departure orbit.
     /*!
-     * The semi major axis of the departure orbit, where the escape maneuver is applied.
+     * The semi-major axis of the departure orbit, where the escape maneuver is applied.
      */
     double semiMajorAxis_;
 
     //! The eccentricity of the departure orbit.
     /*!
-     * The eccentricity of the departure orbit, where the escape maneuver is applied.
+     *  The eccentricity of the departure orbit, where the escape maneuver is applied.
      */
     double eccentricity_;
+
+    //! Boolean denoting whether to include the Delta V of arrival.
+    bool includeDepartureDeltaV_;
+
+    //! Double denoting the value of the escape Delta V.
+    double escapeDeltaV_;
 
 private:
 
 };
+
 } // namespace transfer_trajectories
+
 } // namespace tudat
 
 #endif // TUDAT_DEPARTURE_LEG_H

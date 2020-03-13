@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -119,6 +119,15 @@ Eigen::Vector7d computeStateDerivativeForUnifiedStateModelModifiedRodriguesParam
                 reference_frames::getInertialToRswSatelliteCenteredFrameRotationMatrix(
                     currentCartesianState ) * accelerationsInInertialFrame, centralBodyGravitationalParameter );
 }
+
+
+template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< double, double >;
+
+#if( BUILD_WITH_EXTENDED_PRECISION_PROPAGATION_TOOLS )
+template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< long double, double >;
+template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< double, Time >;
+template class NBodyUnifiedStateModelModifiedRodriguesParametersStateDerivative< long double, Time >;
+#endif
 
 } // namespace propagators
 

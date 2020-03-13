@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -40,12 +40,12 @@ BOOST_AUTO_TEST_CASE( test_json_gravityField_secondOrderGravitational )
     using namespace json_interface;
 
     // Create TorqueSettings from JSON file
-    const boost::shared_ptr< TorqueSettings > fromFileSettings =
-            parseJSONFile< boost::shared_ptr< TorqueSettings > >( INPUT( "secondOrderGravitational" ) );
+    const std::shared_ptr< TorqueSettings > fromFileSettings =
+            parseJSONFile< std::shared_ptr< TorqueSettings > >( INPUT( "secondOrderGravitational" ) );
 
     // Create TorqueSettings manually
-    const boost::shared_ptr< TorqueSettings > manualSettings =
-            boost::make_shared< TorqueSettings >( second_order_gravitational_torque );
+    const std::shared_ptr< TorqueSettings > manualSettings =
+            std::make_shared< TorqueSettings >( second_order_gravitational_torque );
 
     // Compare
     BOOST_CHECK_EQUAL_JSON( fromFileSettings, manualSettings );
@@ -59,12 +59,12 @@ BOOST_AUTO_TEST_CASE( test_json_gravityField_aerodynamic )
     using namespace json_interface;
 
     // Create TorqueSettings from JSON file
-    const boost::shared_ptr< TorqueSettings > fromFileSettings =
-            parseJSONFile< boost::shared_ptr< TorqueSettings > >( INPUT( "aerodynamic" ) );
+    const std::shared_ptr< TorqueSettings > fromFileSettings =
+            parseJSONFile< std::shared_ptr< TorqueSettings > >( INPUT( "aerodynamic" ) );
 
     // Create TorqueSettings manually
-    const boost::shared_ptr< TorqueSettings > manualSettings =
-            boost::make_shared< TorqueSettings >( aerodynamic_torque );
+    const std::shared_ptr< TorqueSettings > manualSettings =
+            std::make_shared< TorqueSettings >( aerodynamic_torque );
 
     // Compare
     BOOST_CHECK_EQUAL_JSON( fromFileSettings, manualSettings );

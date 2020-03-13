@@ -1,4 +1,4 @@
-/*    Copyright (c) 2010-2018, Delft University of Technology
+/*    Copyright (c) 2010-2019, Delft University of Technology
  *    All rigths reserved
  *
  *    This file is part of the Tudat. Redistribution and use in source and
@@ -66,6 +66,8 @@ void AerodynamicAccelerationPartial::update( const double currentTime )
     vehicleStateSetFunction_( nominalState );
     flightConditions_->updateConditions( currentTime );
     aerodynamicAcceleration_->updateMembers( currentTime );
+
+    currentTime_ = currentTime;
 }
 
 } // namespace acceleration_partials
